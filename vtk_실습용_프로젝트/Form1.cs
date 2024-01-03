@@ -17,5 +17,15 @@ namespace vtk_실습용_프로젝트
             ThreeDViewerInfo.Viewer.Initalize(sender as RenderWindowControl);
             ThreeDViewerInfo.InitCustomInteraction(ThreeDViewerInfo.Viewer);
         }
+
+        private void Form1_Load(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private void ButtonClick(object sender, System.EventArgs e)
+        {
+            textBox1.Text = "Hello Form";
+        }
     }
 }
