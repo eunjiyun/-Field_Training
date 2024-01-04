@@ -9,7 +9,7 @@ namespace DensfloReport
         static public readonly ThreeDViewer[] viewerList = new[] { new ThreeDViewer() };
         static public ThreeDViewer[] ViewerList { get { return viewerList; } }
         static public ThreeDViewer Viewer { get { return ViewerList[0]; } }
-   
+
         static public void Render()
         {
             foreach (var codi in ViewerList)
@@ -51,7 +51,7 @@ namespace DensfloReport
             codi.Window.interaction.currentInteractionFunctionSet.OnLeftDoubleClick
                 = () =>
                 {
-                    
+
                 };
         }
 
@@ -73,20 +73,93 @@ namespace DensfloReport
             onchar.Add((sbyte)'a',
               () =>
               {
-                  Console.WriteLine("a");
+
+                  vtkPoints points = vtkPoints.New();
+                  double[,] p = new double[,] {
+            { 1.0,  1.0, 1.0 },
+            {-1.0,  1.0, 1.0 },
+            {-1.0, -1.0, 1.0 },
+            { 1.0, -1.0, 1.0 },
+            { 0.0,  0.0, 0.0 }};
+
+                  for (int i = 0; i < 5; i++)
+                      points.InsertNextPoint(p[i, 0], p[i, 1], p[i, 2]);
+
+                  vtkPyramid pyramid = vtkPyramid.New();
+                  for (int i = 0; i < 5; i++)
+                      pyramid.GetPointIds().SetId(i, i);
+
+                  vtkCellArray cells = vtkCellArray.New();
+                  cells.InsertNextCell(pyramid);
+
+                  vtkUnstructuredGrid ug = vtkUnstructuredGrid.New();
+                  ug.SetPoints(points);
+                  ug.InsertNextCell(pyramid.GetCellType(), pyramid.GetPointIds());
+
+                  //Create an actor and mapper
+                  vtkDataSetMapper mapper = vtkDataSetMapper.New();
+                  mapper.SetInputData(ug);
+
+                  vtkActor actor = vtkActor.New();
+                  actor.RotateX(105.0);
+                  actor.RotateZ(-36.0);
+                  actor.SetMapper(mapper);
+
+                  actor.GetProperty().SetColor(1, 0, 0);
+
+                  viewer.GetVtkRenderer(0).AddActor(actor);
+
+
+                  var testactor = viewer.GetVtkRenderer().GetActors().GetItemAsObject(0) as vtkActor;
+                  testactor.VisibilityOff();
+
                   return true;
               });
 
             onchar.Add((sbyte)'s',
               () =>
               {
+
+                  // Create two arrows.  
+                  vtkArrowSource arrowSource01 = vtkArrowSource.New();
+                  vtkArrowSource arrowSource02 = vtkArrowSource.New();
+                  arrowSource02.SetShaftResolution(24);   // default = 6
+                  arrowSource02.SetTipResolution(36);     // default = 6
+
+                  // Visualize
+                  vtkPolyDataMapper mapper01 = vtkPolyDataMapper.New();
+
+                  mapper01.SetInputConnection(arrowSource01.GetOutputPort());
+
+                  vtkActor actor01 = vtkActor.New();
+
+                  actor01.SetMapper(mapper01);
+
+                  actor01.SetPosition(0.0, 0.25, 0.0);
+
+                  actor01.GetProperty().SetColor(1, 0, 1);
+
+                  viewer.GetVtkRenderer(0).AddActor(actor01);
+
+                  var testactor = viewer.GetVtkRenderer().GetActors().GetItemAsObject(0) as vtkActor;
+                  testactor.VisibilityOff();
+
                   return true;
               });
 
             onchar.Add((sbyte)'w',
             () =>
             {
-                  return true;
+
+                return true;
+            });
+
+            onchar.Add((sbyte)27, // ESC 키의 ASCII 값은 27입니다.
+            () =>
+            {
+                 // 종료 코드 추가
+            Environment.Exit(0);
+             return true;
             });
         }
     }

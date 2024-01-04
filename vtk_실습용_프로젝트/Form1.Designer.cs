@@ -1,4 +1,6 @@
-﻿namespace vtk_실습용_프로젝트
+﻿using System.Windows.Forms;
+
+namespace vtk_실습용_프로젝트
 {
     partial class Form1
     {
@@ -35,18 +37,18 @@
             // 
             // renderWindowControl1
             // 
-            this.renderWindowControl1.AddTestActors = true;
-            this.renderWindowControl1.Location = new System.Drawing.Point(-2, 13);
+            this.renderWindowControl1.AddTestActors = false;
+            this.renderWindowControl1.Location = new System.Drawing.Point(0, 13);
             this.renderWindowControl1.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.renderWindowControl1.Name = "renderWindowControl1";
-            this.renderWindowControl1.Size = new System.Drawing.Size(827, 482);
+            this.renderWindowControl1.Size = new System.Drawing.Size(1750, 1070);
             this.renderWindowControl1.TabIndex = 0;
             this.renderWindowControl1.TestText = null;
             this.renderWindowControl1.Load += new System.EventHandler(this.renderWindowControl1_Load);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(836, 38);
+            this.button1.Location = new System.Drawing.Point(1477, 12);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 29);
             this.button1.TabIndex = 1;
@@ -56,16 +58,16 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(833, 84);
+            this.textBox1.Location = new System.Drawing.Point(1477, 47);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(67, 25);
+            this.textBox1.Size = new System.Drawing.Size(75, 25);
             this.textBox1.TabIndex = 2;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(914, 562);
+            this.ClientSize = new System.Drawing.Size(1920, 1055);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.renderWindowControl1);
@@ -78,11 +80,14 @@
 
         }
 
+       
         #endregion
 
         private Kitware.VTK.RenderWindowControl renderWindowControl1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox textBox1;
     }
+
+
 }
 
