@@ -74,6 +74,25 @@ namespace DensfloReport
               () =>
               {
 
+                  var 렌더러 = viewer.GetVtkRenderer();
+                  var 액터들 = 렌더러.GetActors();
+
+                  for (int i = 0; i < 액터들.GetNumberOfItems(); ++i)
+                  {
+                      var i번째액터 = 액터들.GetItemAsObject(i) as vtkActor;
+
+                      if ("안녕" != i번째액터.GetObjectName())
+                          Console.WriteLine(i번째액터.GetObjectName());
+                  }
+
+
+                  return true;
+              });
+
+            onchar.Add((sbyte)'b',
+              () =>
+              {
+
                   vtkPoints points = vtkPoints.New();
                   double[,] p = new double[,] {
             { 1.0,  1.0, 1.0 },
@@ -157,9 +176,9 @@ namespace DensfloReport
             onchar.Add((sbyte)27, // ESC 키의 ASCII 값은 27입니다.
             () =>
             {
-                 // 종료 코드 추가
-            Environment.Exit(0);
-             return true;
+                // 종료 코드 추가
+                Environment.Exit(0);
+                return true;
             });
         }
     }

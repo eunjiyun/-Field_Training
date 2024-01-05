@@ -24,7 +24,6 @@ namespace DensfloReport
         public Action<object, EventArgs> OnSecondRender = (s, e) => { };
 
         public Dictionary<sbyte, Func<bool>> OnChar = new Dictionary<sbyte, Func<bool>>();
-        //
     };
 
     public class InteractorStyle

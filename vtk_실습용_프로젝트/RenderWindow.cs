@@ -56,7 +56,7 @@ namespace DensfloReport
         {
             om.SetOrientationMarker(makeAnnotatedCubeActor());
             om.SetInteractor(inst);
-            om.SetViewport(0.0, 0.05, 0.1, 0.2);
+            om.SetViewport(0.0, 0.0, 0.1, 0.25);
             om.On();
             om.InteractiveOff();
         }
@@ -130,12 +130,14 @@ namespace DensfloReport
             arrow_actor.GetProperty().SetEdgeColor(0, 0, 0);
             arrow_actor.GetProperty().EdgeVisibilityOn();
             arrow_actor.SetMapper(arrow_mapper);
+            arrow_actor.RotateZ(-90);
 
             var caption_plusX = vtkCaptionActor2D.New();
-            caption_plusX.SetCaption("+X");
+            caption_plusX.SetCaption("+Y");
             double[] position = arrow_actor.GetPosition();
             caption_plusX.SetAttachmentPoint(position[0], position[1], position[2]);
             caption_plusX.GetCaptionTextProperty().SetFontSize(12);
+            //arrow_actor.RotateZ(90);
 
             // Repeat for -X, +Y, -Y, +Z, -Z
 
