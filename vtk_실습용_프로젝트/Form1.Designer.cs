@@ -42,17 +42,18 @@ namespace vtk_실습용_프로젝트
             // renderWindowControl1
             // 
             this.renderWindowControl1.AddTestActors = false;
-            this.renderWindowControl1.Location = new System.Drawing.Point(0, 13);
+            this.renderWindowControl1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.renderWindowControl1.Location = new System.Drawing.Point(31, 13);
             this.renderWindowControl1.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.renderWindowControl1.Name = "renderWindowControl1";
-            this.renderWindowControl1.Size = new System.Drawing.Size(1750, 1070);
+            this.renderWindowControl1.Size = new System.Drawing.Size(667, 482);
             this.renderWindowControl1.TabIndex = 0;
             this.renderWindowControl1.TestText = null;
             this.renderWindowControl1.Load += new System.EventHandler(this.renderWindowControl1_Load);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(1433, 40);
+            this.button1.Location = new System.Drawing.Point(722, 78);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 29);
             this.button1.TabIndex = 1;
@@ -62,14 +63,14 @@ namespace vtk_실습용_프로젝트
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(1433, 75);
+            this.textBox1.Location = new System.Drawing.Point(734, 244);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(75, 25);
             this.textBox1.TabIndex = 2;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(1514, 36);
+            this.button2.Location = new System.Drawing.Point(734, 13);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(35, 36);
             this.button2.TabIndex = 3;
@@ -79,7 +80,7 @@ namespace vtk_실습용_프로젝트
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(1433, 116);
+            this.button3.Location = new System.Drawing.Point(722, 192);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(96, 35);
             this.button3.TabIndex = 4;
@@ -89,7 +90,7 @@ namespace vtk_실습용_프로젝트
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(1433, 178);
+            this.button4.Location = new System.Drawing.Point(715, 136);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(103, 33);
             this.button4.TabIndex = 5;
@@ -101,7 +102,7 @@ namespace vtk_실습용_프로젝트
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1920, 1055);
+            this.ClientSize = new System.Drawing.Size(832, 562);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -124,8 +125,10 @@ namespace vtk_실습용_프로젝트
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox textBox1;
         private Button button2;
+
         private Button button3;
         private Button button4;
+
     }
 
 

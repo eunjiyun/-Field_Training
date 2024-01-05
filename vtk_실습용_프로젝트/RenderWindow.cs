@@ -63,87 +63,89 @@ namespace DensfloReport
 
         vtkPropAssembly makeAnnotatedCubeActor()
         {
-            //// Annotated Cube setup.
-            //var annotated_cube = vtkAnnotatedCubeActor.New();
-            //annotated_cube.SetFaceTextScale(0.366667);
+            // Annotated Cube setup.
+            var annotated_cube = vtkAnnotatedCubeActor.New();
+            annotated_cube.SetFaceTextScale(0.366667);
 
-            //// Anatomic labeling
-            //annotated_cube.SetXPlusFaceText("+X");
-            //annotated_cube.SetXMinusFaceText("-X");
-            //annotated_cube.SetYPlusFaceText("+Y");
-            //annotated_cube.SetYMinusFaceText("-Y");
-            //annotated_cube.SetZPlusFaceText("+Z");
-            //annotated_cube.SetZMinusFaceText("-Z");
+            // Anatomic labeling
+            annotated_cube.SetXPlusFaceText("+X");
+            annotated_cube.SetXMinusFaceText("-X");
+            annotated_cube.SetYPlusFaceText("+Y");
+            annotated_cube.SetYMinusFaceText("-Y");
+            annotated_cube.SetZPlusFaceText("+Z");
+            annotated_cube.SetZMinusFaceText("-Z");
 
-            //// Change the vector text colors.
-            //annotated_cube.GetTextEdgesProperty().SetColor(0, 0, 0);
-            //annotated_cube.GetTextEdgesProperty().SetLineWidth(1);
+            // Change the vector text colors.
+            annotated_cube.GetTextEdgesProperty().SetColor(0, 0, 0);
+            annotated_cube.GetTextEdgesProperty().SetLineWidth(1);
 
-            //annotated_cube.GetXPlusFaceProperty().SetColor(1, 0.4, 0.4);
-            //annotated_cube.GetXMinusFaceProperty().SetColor(1, 0.4, 0.4);
-            //annotated_cube.GetYPlusFaceProperty().SetColor(1, 0.4, 0.4);
-            //annotated_cube.GetYMinusFaceProperty().SetColor(1, 0.4, 0.4);
-            //annotated_cube.GetZPlusFaceProperty().SetColor(1, 0.4, 0.4);
-            //annotated_cube.GetZMinusFaceProperty().SetColor(1, 0.4, 0.4);
+            annotated_cube.GetXPlusFaceProperty().SetColor(1, 0.4, 0.4);
+            annotated_cube.GetXMinusFaceProperty().SetColor(1, 0.4, 0.4);
+            annotated_cube.GetYPlusFaceProperty().SetColor(1, 0.4, 0.4);
+            annotated_cube.GetYMinusFaceProperty().SetColor(1, 0.4, 0.4);
+            annotated_cube.GetZPlusFaceProperty().SetColor(1, 0.4, 0.4);
+            annotated_cube.GetZMinusFaceProperty().SetColor(1, 0.4, 0.4);
 
-            //annotated_cube.SetXFaceTextRotation(90);
-            //annotated_cube.SetYFaceTextRotation(180);
-            //annotated_cube.SetZFaceTextRotation(-90);
-            //// Make the annotated cube transparent.
-            //annotated_cube.GetCubeProperty().SetOpacity(0);
+            annotated_cube.SetXFaceTextRotation(90);
+            annotated_cube.SetYFaceTextRotation(180);
+            annotated_cube.SetZFaceTextRotation(-90);
+            // Make the annotated cube transparent.
+            annotated_cube.GetCubeProperty().SetOpacity(0);
 
-            //// Colored faces cube setup.
-            //var cube_source = vtkCubeSource.New();
-            //cube_source.Update();
+            // Colored faces cube setup.
+            var cube_source = vtkCubeSource.New();
+            cube_source.Update();
 
-            //var cube_mapper = vtkPolyDataMapper.New();
-            //cube_mapper.SetInputData(cube_source.GetOutput());
-            //cube_mapper.Update();
-
-            //var cube_actor = vtkActor.New();
-            //cube_actor.GetProperty().SetColor(0.9, 0.9, 0.9);
-            //cube_actor.GetProperty().SetEdgeColor(0, 0, 0);
-            //cube_actor.GetProperty().EdgeVisibilityOn();
-            //cube_actor.SetMapper(cube_mapper);
-
-            //// Assemble the colored cube and annotated cube texts into a composite prop.
-            //var prop_assembly = vtkPropAssembly.New();
-            //prop_assembly.AddPart(annotated_cube);
-            //prop_assembly.AddPart(cube_actor);
+            var cube_mapper = vtkPolyDataMapper.New();
+            cube_mapper.SetInputData(cube_source.GetOutput());
+            cube_mapper.Update();
 
 
+            var cube_actor = vtkActor.New();
+            cube_actor.GetProperty().SetColor(0.9, 0.9, 0.9);
+            cube_actor.GetProperty().SetEdgeColor(0, 0, 0);
+            cube_actor.GetProperty().EdgeVisibilityOn();
+            cube_actor.SetMapper(cube_mapper);
 
 
-
-
-
-
-            var arrow_source = vtkArrowSource.New();
-            arrow_source.Update();
-
-            var arrow_mapper = vtkPolyDataMapper.New();
-            arrow_mapper.SetInputData(arrow_source.GetOutput());
-            arrow_mapper.Update();
-
-            var arrow_actor = vtkActor.New();
-            arrow_actor.GetProperty().SetColor(0.9, 0.9, 0.9);
-            arrow_actor.GetProperty().SetEdgeColor(0, 0, 0);
-            arrow_actor.GetProperty().EdgeVisibilityOn();
-            arrow_actor.SetMapper(arrow_mapper);
-            arrow_actor.RotateZ(-90);
-
-            var caption_plusX = vtkCaptionActor2D.New();
-            caption_plusX.SetCaption("+Y");
-            double[] position = arrow_actor.GetPosition();
-            caption_plusX.SetAttachmentPoint(position[0], position[1], position[2]);
-            caption_plusX.GetCaptionTextProperty().SetFontSize(12);
-            //arrow_actor.RotateZ(90);
-
-            // Repeat for -X, +Y, -Y, +Z, -Z
-
+            // Assemble the colored cube and annotated cube texts into a composite prop.
             var prop_assembly = vtkPropAssembly.New();
-            prop_assembly.AddPart(arrow_actor);
-            prop_assembly.AddPart(caption_plusX);
+            prop_assembly.AddPart(annotated_cube);
+            prop_assembly.AddPart(cube_actor);
+
+
+
+
+
+
+
+
+            //var arrow_source = vtkArrowSource.New();
+            //arrow_source.Update();
+
+            //var arrow_mapper = vtkPolyDataMapper.New();
+            //arrow_mapper.SetInputData(arrow_source.GetOutput());
+            //arrow_mapper.Update();
+
+            //var arrow_actor = vtkActor.New();
+            //arrow_actor.GetProperty().SetColor(0.9, 0.9, 0.9);
+            //arrow_actor.GetProperty().SetEdgeColor(0, 0, 0);
+            //arrow_actor.GetProperty().EdgeVisibilityOn();
+            //arrow_actor.SetMapper(arrow_mapper);
+            //arrow_actor.RotateZ(-90);
+
+            //var caption_plusX = vtkCaptionActor2D.New();
+            //caption_plusX.SetCaption("+Y");
+            //double[] position = arrow_actor.GetPosition();
+            //caption_plusX.SetAttachmentPoint(position[0], position[1], position[2]);
+            //caption_plusX.GetCaptionTextProperty().SetFontSize(12);
+            ////arrow_actor.RotateZ(90);
+
+            //// Repeat for -X, +Y, -Y, +Z, -Z
+
+            //var prop_assembly = vtkPropAssembly.New();
+            //prop_assembly.AddPart(arrow_actor);
+            //prop_assembly.AddPart(caption_plusX);
 
             return prop_assembly;
         }
