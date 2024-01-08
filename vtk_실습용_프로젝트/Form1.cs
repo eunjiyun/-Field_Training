@@ -37,92 +37,99 @@ namespace vtk_실습용_프로젝트
             ThreeDViewerInfo.Viewer.Initalize(sender as RenderWindowControl);
             ThreeDViewerInfo.InitCustomInteraction(ThreeDViewerInfo.Viewer);
 
-
-            for (int i = 0; i < 20; ++i)
-                ThreeDViewerInfo.Viewer.Window.interaction.inst.OnMouseWheelBackward();
-
-
-
-
             vtkRenderWindow renderWindow = renderWindowControl1.RenderWindow;
             vtkRenderer renderer = renderWindow.GetRenderers().GetFirstRenderer();
 
 
-            vtkConeSource coneSource = new vtkConeSource();
-            vtkSphereSource sphereSource = vtkSphereSource.New();
-            sphereSource.SetRadius(0.5);
-            sphereSource.SetPhiResolution(5);
-            sphereSource.SetThetaResolution(5);
+            // For coneActor Color
+            Color coneActorColor;
+            // For creamActor Color
+            Color creamActorColor;
+          
 
-            vtkGlyph3D glyph3D = new vtkGlyph3D();
-            glyph3D.SetSourceConnection(sphereSource.GetOutputPort());
+            // Define colors
+            coneActorColor = Color.FromArgb(210, 105, 30); // RGB for "chocolate"
+            creamActorColor = Color.FromArgb(189, 252, 201); // RGB for "mint"
+           
+            vtkCone cone = new vtkCone();
+            cone.SetAngle(20);
 
-            vtkGlyph3D coneGlyph3D = new vtkGlyph3D();
-            coneGlyph3D.SetSourceConnection(coneSource.GetOutputPort());
+            vtkPlane vertPlane = new vtkPlane();
+            vertPlane.SetOrigin(.1, 0, 0);
+            vertPlane.SetNormal(-1, 0, 0);
 
-            //List<float> numList = new List<float>();
-            List<float> numList = new List<float>(1000000); // Initialize with the known size.
-            Random rand = new Random();
+            vtkPlane basePlane = new vtkPlane();
+            basePlane.SetOrigin(1.2, 0, 0);
+            basePlane.SetNormal(1, 0, 0);
 
-            for (int i = 0; i < 1000000; ++i) // Test with 10, but can be changed to 1,000,000
-            {
-                float num = (float)rand.NextDouble() * 26 - 13;
-                numList.Add(num);
-            }
+            vtkSphere iceCream = new vtkSphere();
+            iceCream.SetCenter(1.333, 0, 0);
+            iceCream.SetRadius(0.5);
 
-            int chunkSize = 1000; // 한 번에 처리할 데이터의 수를 설정합니다.
-            int loopCount = (int)Math.Ceiling((double)numList.Count / chunkSize); // 전체 루프 실행 횟수를 계산합니다.
+            vtkSphere bite = new vtkSphere();
+            bite.SetCenter(1.5, 0, 0.5);
+            bite.SetRadius(0.25);
 
-            vtkPoints points = new vtkPoints();
-            vtkPoints conePoints = new vtkPoints();
+            // Combine primitives to build ice-cream cone. Clip the cone with planes.
+            vtkImplicitBoolean theCone = new vtkImplicitBoolean();
+            theCone.SetOperationTypeToIntersection();
+            theCone.AddFunction(cone);
+            theCone.AddFunction(vertPlane);
+            theCone.AddFunction(basePlane);
 
+            // Take a bite out of the ice cream.
+            vtkImplicitBoolean theCream = new vtkImplicitBoolean();
+            theCream.SetOperationTypeToDifference();
+            theCream.AddFunction(iceCream);
+            theCream.AddFunction(bite);
 
+            // The sample function generates a distance function from the
+            // implicit function (which in this case is the cone). 
+            // This is then contoured to get a polygonal surface.
 
-            for (int loopIndex = 0; loopIndex < loopCount; loopIndex++)
-            {
-                int currentChunkSize = Math.Min(chunkSize, numList.Count - loopIndex * chunkSize); // 현재 청크의 크기를 계산합니다.
+            vtkSampleFunction theConeSample = new vtkSampleFunction();
+            theConeSample.SetImplicitFunction(theCone);
+            theConeSample.SetModelBounds(-1, 1.5, -1.25, 1.25, -1.25, 1.25);
+            theConeSample.SetSampleDimensions(128, 128, 128);
+            theConeSample.ComputeNormalsOff();
 
+            vtkContourFilter theConeSurface = new vtkContourFilter();
+            theConeSurface.SetInputConnection(theConeSample.GetOutputPort());
+            theConeSurface.SetValue(0, 0.0);
 
-                for (int i = 0; i < currentChunkSize; ++i) // numList의 일부분만 처리합니다.
-                {
-                    double numValue = numList[loopIndex * chunkSize + i];
+            vtkPolyDataMapper coneMapper = new vtkPolyDataMapper();
+            coneMapper.SetInputConnection(theConeSurface.GetOutputPort());
+            coneMapper.ScalarVisibilityOff();
 
-
-                    points.InsertNextPoint(0.03f + numValue, 0 + numValue, 0 + numValue);
-                    conePoints.InsertNextPoint(0.8f + numValue, numValue, 0 + numValue);
-
-                }
-            }
-
-            vtkPolyData spheresData = new vtkPolyData();
-            spheresData.SetPoints(points);
-            glyph3D.SetInputData(spheresData);
-            glyph3D.ScalingOff();
-            //glyph3D.Update();
-
-            vtkPolyData conesData = new vtkPolyData();
-            conesData.SetPoints(conePoints);
-            coneGlyph3D.SetInputData(conesData);
-            coneGlyph3D.ScalingOff();
-            //coneGlyph3D.Update();
-
-            vtkPolyDataMapper mapper = vtkPolyDataMapper.New();
-            mapper.SetInputConnection(glyph3D.GetOutputPort());
-
-            vtkPolyDataMapper coneMapper = vtkPolyDataMapper.New();
-            coneMapper.SetInputConnection(coneGlyph3D.GetOutputPort());
-
-            vtkLODActor actor = vtkLODActor.New();
-            actor.SetMapper(mapper);
-            actor.GetProperty().SetColor(0, 1, 1); // Cyan
-            actor.SetNumberOfCloudPoints(100); // Set the number of points for the lowest resolution 
-
-            vtkLODActor coneActor = vtkLODActor.New();
+            vtkActor coneActor = new vtkActor();
             coneActor.SetMapper(coneMapper);
-            coneActor.GetProperty().SetColor(1, 0.843137, 0); // Gold
-            coneActor.SetNumberOfCloudPoints(100); // Set the number of points for the lowest resolution 
+            coneActor.GetProperty().SetColor(coneActorColor.R / 255.0f, coneActorColor.G / 255.0f, coneActorColor.B / 255.0f);
             콘액터 = coneActor;
-            renderer.AddActor(actor);
+            //The same here for the ice cream.
+
+            vtkSampleFunction theCreamSample = new vtkSampleFunction();
+            theCreamSample.SetImplicitFunction(theCream);
+            theCreamSample.SetModelBounds(0, 2.5, -1.25, 1.25, -1.25, 1.25);
+            theCreamSample.SetSampleDimensions(128, 128, 128);
+            theCreamSample.ComputeNormalsOff();
+
+            vtkContourFilter theCreamSurface = new vtkContourFilter();
+            theCreamSurface.SetInputConnection(theCreamSample.GetOutputPort());
+            theCreamSurface.SetValue(0, 0.0);
+
+            vtkPolyDataMapper creamMapper = new vtkPolyDataMapper();
+            creamMapper.SetInputConnection(theCreamSurface.GetOutputPort());
+            creamMapper.ScalarVisibilityOff();
+
+            vtkActor creamActor = new vtkActor();
+            creamActor.SetMapper(creamMapper);
+            creamActor.GetProperty().SetDiffuseColor(creamActorColor.R/255.0f , creamActorColor.G / 255.0f, creamActorColor.B / 255.0f);
+            creamActor.GetProperty().SetSpecular(.6);
+            creamActor.GetProperty().SetSpecularPower(50);
+
+            
+
+            renderer.AddActor(creamActor);
             renderer.AddActor(coneActor);
         }
 
@@ -141,10 +148,8 @@ namespace vtk_실습용_프로젝트
         }
 
         private void play(object sender, EventArgs e)
-
         {
             textBox1.Text = "start!";
-
         }
 
 
@@ -157,8 +162,9 @@ namespace vtk_실습용_프로젝트
                 //button4.BackColor = coldial.Color;
 
                 Color c = coldial.Color;
-                콘액터.GetProperty().SetColor(c.R / 255f, c.G / 255f, c.B / 255f);
+                콘액터.GetProperty().SetColor(c.R , c.G , c.B );
                 콘액터.Modified();
+                
             }
         }
     }
