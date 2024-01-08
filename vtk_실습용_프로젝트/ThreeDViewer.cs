@@ -41,6 +41,54 @@ namespace DensfloReport
             codi.Window.interaction.currentInteractionFunctionSet.OnLeftButtonDown
                 = () =>
                 {
+                    vtkCellPicker picker=new vtkCellPicker();
+
+                    //마우스가 찍힌 화면 스크린 픽셀 좌표계 얻어내기.
+                    var pos = codi.Window.interaction.inst.GetInteractor().GetEventPosition();
+                    int xPos=pos.ElementAt(0);
+                    int yPos=pos.ElementAt(1);
+
+                    //렌더러에서 피킹 시도
+                    picker.Pick(xPos, yPos, 0, codi.GetVtkRenderer());
+
+                    //피킹된 액터 (아무것도 피킹되지 않았다면 null 일 수 있음)
+                    var pickedActor=picker.GetActor(); 
+
+                    if(-1==picker.GetCellId()||pickedActor==null)
+                    {
+                        //액터 픽 실패
+                        //if(pickedActor == null)
+                        //    Console.WriteLine("null");
+                        //else
+                        //    Console.WriteLine(picker.GetCellId());
+                        return false;
+                    }
+
+                    //vtkPolyData polyData = pickedActor.GetMapper().GetInputAsDataSet() as vtkPolyData;
+                    //long cellId = picker.GetCellId();
+                    //vtkDataArray colors = polyData.GetCellData().GetScalars();
+
+                    //if (colors != null)
+                    //{
+                    //    double r = colors.GetComponent(cellId, 0);
+                    //    double g = colors.GetComponent(cellId, 1);
+                    //    double b = colors.GetComponent(cellId, 2);
+                    //    Console.WriteLine($"RGB of picked cell: {r}, {g}, {b}");
+                    //}
+
+                    Console.WriteLine(pickedActor.GetObjectName());
+
+                    //피킹된 3차원 vtk 좌표계 얻어내기
+                    double[] pickedPosition = picker.GetPickPosition();
+
+                    //c# 문자열 포맷
+                    //printf 생각하면 됩니다.
+                    //{0} {1} 자리에 첫번째, 두번째 인자가 문자열로 해석돼서 들어가요.
+                    Console.WriteLine("x:{0}, y:{1}, z:{2}", pickedPosition[0], pickedPosition[1], pickedPosition[2]);
+
+                    //새로운 액터를 만들고, 위에서 얻어낸 pickedPosition 위치로 설정해서 렌더러에 넣어주면,
+                    //마우스 클릭할때마다 액터에 다른 액터가 붙게 할 수도 있어요.
+
                     return false;
                 };
         }

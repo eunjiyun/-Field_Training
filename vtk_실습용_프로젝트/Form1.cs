@@ -11,6 +11,7 @@ namespace vtk_실습용_프로젝트
     public partial class Form1 : Form
     {
         vtkActor 콘액터;
+        public vtkPolyData polyData;
         public Form1()
         {
             InitializeComponent();
@@ -28,38 +29,85 @@ namespace vtk_실습용_프로젝트
         {
             this.Focus();
         }
+        
 
-       
 
         private void renderWindowControl1_Load(object sender, System.EventArgs e)
         {
-           
-           
-           
             //readply 
             vtkPLYReader reader=new vtkPLYReader();
             
             reader.SetFileName("C:\\Users\\dbzho\\OneDrive\\문서\\GitHub\\Field_Training\\vtk_실습용_프로젝트\\upperJaw_1.ply");
             //reader.SetInputData();
             reader.Update();
-            var plypolydata=reader.GetOutput();
+            //var plypolydata=reader.GetOutput();
 
-            Console.WriteLine(plypolydata/**Directory.GetCurrentDirectory()*/);
+            polyData = reader.GetOutput();
+            vtkDataArray colors = polyData.GetPointData().GetScalars();
 
-            vtkPolyDataMapper mapper=new vtkPolyDataMapper();
-            mapper.SetInputData(plypolydata);
-            mapper.Update();
+           
 
-            vtkActor actor=new vtkActor();
+            // Create a new array to store the HSV values
+            vtkFloatArray hsvValues = new vtkFloatArray();
+            hsvValues.SetNumberOfComponents(3);
+            hsvValues.SetName("HSVValues");
+
+          
+
+            for (int i = 0; i < colors.GetNumberOfTuples(); i++)
+            {
+                float r = (float)colors.GetComponent(i, 0);
+                float g = (float)colors.GetComponent(i, 1);
+                float b = (float)colors.GetComponent(i, 2);
+
+                // Convert RGB to HSV
+                Color color = Color.FromArgb((int)r, (int)g, (int)b);
+                float hue = color.GetHue();
+                float saturation = color.GetSaturation();
+                float brightness = color.GetBrightness();
+
+                hsvValues.InsertNextTuple3(hue, saturation, brightness);
+            }
+
+           
+
+            // Add the HSV values to the polydata
+            polyData.GetPointData().SetScalars(hsvValues);
+
+
+
+            //// Scalar values type
+            //Console.WriteLine("Scalar values type: " + colors.GetDataTypeAsString());
+
+            //// Print all scalar values
+            //for (int i = 0; i < scalarValues.GetNumberOfTuples(); i++)
+            //{
+            //    float value = (float)scalarValues.GetTuple1(i);
+            //    Console.WriteLine("Scalar value " + i + ": " + value);
+            //}
+
+            vtkClipPolyData clipper = vtkClipPolyData.New();
+            clipper.SetInputData(polyData);
+            clipper.SetValue(11);
+            clipper.Update();
+
+      
+
+            // Visualize
+            vtkPolyDataMapper mapper = new vtkPolyDataMapper();
+            mapper.SetInputConnection(clipper.GetOutputPort());
+            //mapper.SetInputData(polyData);
+
+            vtkActor actor = new vtkActor();
             actor.SetMapper(mapper);
+
+          
 
             renderWindowControl1.RenderWindow.GetRenderers().GetFirstRenderer().AddActor(actor);
 
             //초기화 하는 함수
             ThreeDViewerInfo.Viewer.Initalize(sender as RenderWindowControl);
             ThreeDViewerInfo.InitCustomInteraction(ThreeDViewerInfo.Viewer);
-
-
         }
 
 
