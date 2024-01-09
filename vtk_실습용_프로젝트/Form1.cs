@@ -139,7 +139,7 @@ namespace vtk_실습용_프로젝트
                 //button4.BackColor = coldial.Color;
 
                 Color c = coldial.Color;
-                콘액터.GetProperty().SetColor(c.R , c.G , c.B );
+                콘액터.GetProperty().SetColor(c.R/255f , c.G / 255f, c.B / 255f);
                 콘액터.Modified();
                 
             }
