@@ -1,9 +1,7 @@
 ﻿using DensfloReport;
 using Kitware.VTK;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 
 namespace vtk_실습용_프로젝트
@@ -15,7 +13,6 @@ namespace vtk_실습용_프로젝트
         public Form1()
         {
             InitializeComponent();
-
 
             this.Load += new EventHandler(Form1_Load); // 이벤트 등록
             this.KeyPreview = true;
@@ -29,36 +26,41 @@ namespace vtk_실습용_프로젝트
         {
             this.Focus();
         }
-        
+
 
 
         private void renderWindowControl1_Load(object sender, System.EventArgs e)
         {
             //readply 
-            vtkPLYReader reader=new vtkPLYReader();
-            
+            vtkPLYReader reader = new vtkPLYReader();
+
             reader.SetFileName("C:\\Users\\dbzho\\OneDrive\\문서\\GitHub\\Field_Training\\vtk_실습용_프로젝트\\upperJaw_1.ply");
-            //reader.SetInputData();
             reader.Update();
-            //var plypolydata=reader.GetOutput();
+
 
             polyData = reader.GetOutput();
-            vtkDataArray colors = polyData.GetPointData().GetScalars();
 
-           
+            // 클리핑 전 RGB 색상 정보를 저장합니다.
+            vtkUnsignedCharArray originalColors = polyData.GetPointData().GetScalars() as vtkUnsignedCharArray;
+
+
+            // 클리핑된 폴리데이터의 각 점에 대한 새로운 RGB 색상 배열을 생성합니다.
+            vtkUnsignedCharArray clippedColors = vtkUnsignedCharArray.New();
+            clippedColors.SetNumberOfComponents(3); // R, G, B
+            clippedColors.SetName("Colors");
 
             // Create a new array to store the HSV values
             vtkFloatArray hsvValues = new vtkFloatArray();
             hsvValues.SetNumberOfComponents(3);
             hsvValues.SetName("HSVValues");
 
-          
 
-            for (int i = 0; i < colors.GetNumberOfTuples(); i++)
+
+            for (int i = 0; i < originalColors.GetNumberOfTuples(); ++i)
             {
-                float r = (float)colors.GetComponent(i, 0);
-                float g = (float)colors.GetComponent(i, 1);
-                float b = (float)colors.GetComponent(i, 2);
+                float r = (float)originalColors.GetComponent(i, 0);
+                float g = (float)originalColors.GetComponent(i, 1);
+                float b = (float)originalColors.GetComponent(i, 2);
 
                 // Convert RGB to HSV
                 Color color = Color.FromArgb((int)r, (int)g, (int)b);
@@ -66,42 +68,40 @@ namespace vtk_실습용_프로젝트
                 float saturation = color.GetSaturation();
                 float brightness = color.GetBrightness();
 
+                // 변환된 RGB 값을 vtkFloatArray에 추가합니다.
                 hsvValues.InsertNextTuple3(hue, saturation, brightness);
             }
 
-           
-
-            // Add the HSV values to the polydata
             polyData.GetPointData().SetScalars(hsvValues);
 
 
-
-            //// Scalar values type
-            //Console.WriteLine("Scalar values type: " + colors.GetDataTypeAsString());
-
-            //// Print all scalar values
-            //for (int i = 0; i < scalarValues.GetNumberOfTuples(); i++)
-            //{
-            //    float value = (float)scalarValues.GetTuple1(i);
-            //    Console.WriteLine("Scalar value " + i + ": " + value);
-            //}
-
+            // 클리핑을 수행합니다.
             vtkClipPolyData clipper = vtkClipPolyData.New();
             clipper.SetInputData(polyData);
+
             clipper.SetValue(11);
             clipper.Update();
 
-      
+            //// 클리핑된 폴리데이터를 가져옵니다.
+            polyData = clipper.GetOutput();
+
+
+            // 클리핑된 폴리데이터의 각 점에 대해 가장 가까운 원본 점의 색상을 매핑합니다.
+            for (int i = 0; i < polyData.GetNumberOfPoints(); ++i)
+                clippedColors.InsertNextTuple3(255, 255, 255);
+
+
+            // 클리핑된 폴리데이터에 매핑된 색상 정보를 설정합니다.
+            polyData.GetPointData().SetScalars(clippedColors);
+
 
             // Visualize
             vtkPolyDataMapper mapper = new vtkPolyDataMapper();
-            mapper.SetInputConnection(clipper.GetOutputPort());
-            //mapper.SetInputData(polyData);
+            mapper.SetInputData(polyData);
 
             vtkActor actor = new vtkActor();
             actor.SetMapper(mapper);
 
-          
 
             renderWindowControl1.RenderWindow.GetRenderers().GetFirstRenderer().AddActor(actor);
 
@@ -113,10 +113,8 @@ namespace vtk_실습용_프로젝트
 
         private void reset(object sender, System.EventArgs e)
         {
-
             Application.Restart(); // 프로그램 재시작
         }
-
 
 
         private void exit(object sender, EventArgs e)
@@ -139,9 +137,9 @@ namespace vtk_실습용_프로젝트
                 //button4.BackColor = coldial.Color;
 
                 Color c = coldial.Color;
-                콘액터.GetProperty().SetColor(c.R/255f , c.G / 255f, c.B / 255f);
+                콘액터.GetProperty().SetColor(c.R / 255f, c.G / 255f, c.B / 255f);
                 콘액터.Modified();
-                
+
             }
         }
     }
