@@ -27,14 +27,14 @@ namespace vtk_실습용_프로젝트
             this.Focus();
         }
 
-
+      
 
         private void renderWindowControl1_Load(object sender, System.EventArgs e)
         {
             //readply 
             vtkPLYReader reader = new vtkPLYReader();
 
-            reader.SetFileName("C:\\Users\\dbzho\\OneDrive\\문서\\GitHub\\Field_Training\\vtk_실습용_프로젝트\\upperJaw_1.ply");
+            reader.SetFileName("C:\\Users\\dbzho\\OneDrive\\문서\\GitHub\\Field_Training\\vtk\\vtk_실습용_프로젝트\\upperJaw_1.ply");
             reader.Update();
 
 
