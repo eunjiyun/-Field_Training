@@ -12,6 +12,7 @@ public:
     QtWidgetsApplication1(QWidget *parent = nullptr);
     ~QtWidgetsApplication1();
 
+    void test();
 private:
     Ui::QtWidgetsApplication1Class ui;
 };

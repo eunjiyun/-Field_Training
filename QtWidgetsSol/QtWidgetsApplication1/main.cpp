@@ -1,10 +1,18 @@
 #include "QtWidgetsApplication1.h"
 #include <QtWidgets/QApplication>
 
-int main(int argc, char *argv[])
+
+#include <QtCore/QFile>
+#include <QtCore/QDataStream>
+#include <iostream>
+#include <QDebug>
+#include <Qt3DRender/QMesh>
+#include "In3DVTK_Def.h"
+
+int main(int argc, char* argv[])
 {
-    QApplication a(argc, argv);//qt¾îÇÃ¸®ÄÉÀÌ¼Ç ¸¸µé±â
-    QtWidgetsApplication1 w;//°´Ã¼¸¦ »ý¼º
-    w.show();//Ã¢À» ¶ç¿ì±â
+    QApplication a(argc, argv);//qtï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
+    QtWidgetsApplication1 w;//ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    w.show();//Ã¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     return a.exec();
 }
