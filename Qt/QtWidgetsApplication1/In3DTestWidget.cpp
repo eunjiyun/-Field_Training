@@ -3,7 +3,7 @@
 
 
 In3DTestWidget::In3DTestWidget(QWidget* parent)
-	: /*QVTKOpenGLNativeWidget*/QWidget(parent)
+	: QVTKOpenGLNativeWidget(parent)
 	, ui(new Ui::In3DTestWidgetClass())
 {
 

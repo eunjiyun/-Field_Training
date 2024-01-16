@@ -11,7 +11,7 @@ QT_END_NAMESPACE
 
 
 
-class In3DTestWidget :public QWidget// public QVTKOpenGLNativeWidget// public QWidget
+class In3DTestWidget : public QVTKOpenGLNativeWidget// public QWidget
 {
 	Q_OBJECT
 
