@@ -112,7 +112,8 @@ void In3DTestWidget::LoadTest()
 
 	renderer = vtkSmartPointer<vtkRenderer>::New();
 	renderer->AddActor(actor);
-
+	vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
+	renderer->SetBackground(colors->GetColor3d("SteelBlue").GetData());
 	//QVTKOpenGLNativeWidget::interactor()->Render();
 
 	renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
