@@ -19,26 +19,16 @@ class QtWidgetsApplication1 : public QMainWindow//메인 윈도우
     Q_OBJECT
 
 public:
-   //vtkFloatArray* hsvValues = vtkFloatArray::New();
-    vtkFloatArray* hsvValues;
-    vtkUnsignedCharArray* clippedColors;// = vtkUnsignedCharArray::New();
-    vtkPolyData* polyData;
-    vtkSmartPointer<vtkPolyDataMapper> mapper ;
-   
-    vtkSmartPointer<vtkActor> actor ;
-    
-    vtkSmartPointer<vtkRenderer> renderer ;
-   
-    vtkSmartPointer<vtkRenderWindow> renderWindow ;
-   
-
-    vtkSmartPointer<vtkRenderWindowInteractor> interactor;
     QtWidgetsApplication1(QWidget* parent = nullptr);
     ~QtWidgetsApplication1();
 
+public:
     void test();
     void colchan();
+
+public:
     In3DTestWidget* widget;
+    vtkUnsignedCharArray* cl;// = vtkUnsignedCharArray::New();
 private:
     Ui::QtWidgetsApplication1Class ui;
     

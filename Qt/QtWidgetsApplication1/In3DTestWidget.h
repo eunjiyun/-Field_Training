@@ -20,6 +20,10 @@ public:
 	~In3DTestWidget();
    
 public:
+    void LoadTest();
+
+public:
+
     vtkFloatArray* hsvValues;
     vtkUnsignedCharArray* clippedColors;// = vtkUnsignedCharArray::New();
     vtkPolyData* polyData;
@@ -34,6 +38,4 @@ public:
    
 private:
 	Ui::In3DTestWidgetClass *ui;
-
-	
 };
