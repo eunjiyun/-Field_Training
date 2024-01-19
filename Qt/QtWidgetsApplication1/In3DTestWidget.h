@@ -4,14 +4,11 @@
 #include "ui_In3DTestWidget.h"
 #include "In3DVTK_Def.h"
 
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class In3DTestWidgetClass; };
 QT_END_NAMESPACE
 
-
-
-class In3DTestWidget : public QVTKOpenGLNativeWidget// public QWidget
+class In3DTestWidget : public QWidget
 {
 	Q_OBJECT
 

@@ -3,7 +3,7 @@
 #include <QDebug>
 
 In3DTestWidget::In3DTestWidget(QWidget* parent)
-	: QVTKOpenGLNativeWidget(parent)
+	: QWidget(parent)
 	, ui(new Ui::In3DTestWidgetClass())
 {
 	ui->setupUi(this);
@@ -95,14 +95,12 @@ void In3DTestWidget::LoadTest()
 	for (int i{}; i < polyData->GetNumberOfPoints(); ++i)
 		clippedColors->InsertNextTuple3(255, 255, 255);
 
-	
 
 
 	// 클리핑된 폴리데이터에 매핑된 색상 정보를 설정합니다.
 	polyData->GetPointData()->SetScalars(clippedColors);
 
 	
-
 	// Visualize
 	mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	mapper->SetInputData(polyData);
