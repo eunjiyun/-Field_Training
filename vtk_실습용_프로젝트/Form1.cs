@@ -104,6 +104,7 @@ namespace vtk_실습용_프로젝트
             vtkActor coneActor = new vtkActor();
             coneActor.SetMapper(coneMapper);
             coneActor.GetProperty().SetColor(coneActorColor.R / 255.0f, coneActorColor.G / 255.0f, coneActorColor.B / 255.0f);
+            //콘액터.GetProperty().SetColor(c.R / 255f, c.G / 255f, c.B / 255f);
             콘액터 = coneActor;
             //The same here for the ice cream.
 
