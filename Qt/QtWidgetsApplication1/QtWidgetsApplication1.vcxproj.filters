@@ -43,9 +43,15 @@
     <ClCompile Include="In3DTestWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ScreenShot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="In3DTestWidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ScreenShot.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

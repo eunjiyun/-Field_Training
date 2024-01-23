@@ -105,6 +105,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ScreenShot.cpp" />
     <QtRcc Include="QtWidgetsApplication1.qrc" />
     <QtUic Include="In3DTestWidget.ui" />
     <QtUic Include="QtWidgetsApplication1.ui" />
@@ -115,6 +116,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="In3DTestWidget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="ScreenShot.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

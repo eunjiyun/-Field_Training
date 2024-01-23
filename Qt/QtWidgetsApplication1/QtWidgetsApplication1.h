@@ -1,7 +1,5 @@
 #pragma once
-
 #include <QtWidgets/QMainWindow>
-#include "ui_QtWidgetsApplication1.h"
 #include <vtkSmartPointer.h>
 #include <vtkPLYReader.h>
 #include <vtkPolyData.h>
@@ -10,8 +8,11 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#include "ui_QtWidgetsApplication1.h"
+
 
 class In3DTestWidget;
+class CScreenShot;
 
 class QtWidgetsApplication1 : public QMainWindow//메인 윈도우
 {
@@ -29,6 +30,7 @@ public:
 public:
     In3DTestWidget* widget;
     vtkUnsignedCharArray* cl;// = vtkUnsignedCharArray::New();
+    CScreenShot* screenShot;
 private:
     Ui::QtWidgetsApplication1Class ui;
     

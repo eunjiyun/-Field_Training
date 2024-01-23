@@ -2,7 +2,7 @@
 #include<iostream>
 #include "In3DVTK_Def.h"
 #include "In3DTestWidget.h"
-
+#include "ScreenShot.h" 
 
 
 //moc : 
@@ -15,18 +15,17 @@ QtWidgetsApplication1::QtWidgetsApplication1(QWidget* parent)
 {
 	ui.setupUi(this);
 
-
-	this->widget = new In3DTestWidget(this);
-	this->widget->setGeometry(300, 100, 200, 200);
-	this->widget->resize(900, 400);
-	this->widget->LoadTest();
-
+	this->screenShot = new CScreenShot();
 	
+	// 메인 윈도우의 중앙 위젯을 설정합니다.
+	QWidget* centralWidget = new QWidget(this);
+	setCentralWidget(centralWidget);
 
-	//어떤 함수에서 어떻게 처리할지
-	connect(ui.pushButton, &QPushButton::clicked, this, &QtWidgetsApplication1::test);
-	cl = vtkUnsignedCharArray::New();
-	connect(ui.pushButton_2, &QPushButton::clicked, this, &QtWidgetsApplication1::colchan);
+	// 중앙 위젯의 레이아웃을 설정합니다.
+	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
+	layout->addWidget(this->screenShot);
+	this->screenShot->setStyleSheet("background-color: steelblue;");
+	this->resize(1200, 800); // 메인 윈도우의 크기를 너비 1200, 높이 800으로 조절
 }
 
 QtWidgetsApplication1::~QtWidgetsApplication1()
