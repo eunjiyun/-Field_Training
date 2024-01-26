@@ -4,35 +4,40 @@
 #include "ui_In3DTestWidget.h"
 #include "In3DVTK_Def.h"
 
+#include "QtWidgetsApplication1.h"
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class In3DTestWidgetClass; };
 QT_END_NAMESPACE
 
-class In3DTestWidget : public QWidget
+
+
+class In3DTestWidget : public QVTKOpenGLNativeWidget
 {
 	Q_OBJECT
 
 public:
-	In3DTestWidget(QWidget *parent = nullptr);
+	In3DTestWidget(QWidget* parent = nullptr);
 	~In3DTestWidget();
-   
-public:
-    void LoadTest();
 
 public:
+	void LoadTest();
 
-    vtkFloatArray* hsvValues;
-    vtkUnsignedCharArray* clippedColors;// = vtkUnsignedCharArray::New();
-    vtkPolyData* polyData;
-    vtkSmartPointer<vtkPolyDataMapper> mapper;
+public:
+	vtkFloatArray* hsvValues;
+	vtkUnsignedCharArray* clippedColors;
+	vtkPolyData* polyData;
 
-    vtkSmartPointer<vtkActor> actor;
+	vtkPolyDataMapper* mapper{ vtkPolyDataMapper::New() };
 
-    vtkSmartPointer<vtkRenderer> renderer;
+	vtkActor* actor{ vtkActor::New() };
 
-    vtkSmartPointer<vtkRenderWindow> renderWindow;
-    vtkSmartPointer<vtkRenderWindowInteractor> interactor;
-   
+	vtkRenderer* renderer{ vtkRenderer::New() };
+
+	vtkRenderWindow* renderWindow{ vtkRenderWindow::New() };
+	vtkRenderWindowInteractor* interactor{ vtkRenderWindowInteractor::New() };
+
 private:
-	Ui::In3DTestWidgetClass *ui;
+	Ui::In3DTestWidgetClass* ui;
 };

@@ -1,46 +1,50 @@
-#include "QtWidgetsApplication1.h"
 #include<iostream>
+#include "vtkInteractorObserver.h"
 #include "In3DVTK_Def.h"
+#include "QtWidgetsApplication1.h"
 #include "In3DTestWidget.h"
 #include "ScreenShot.h" 
 
 
 //moc : 
-// ¼Ò½º ÄÚµå -> .obj ->ÄÄÆÄÀÏ->¸µÅ©(±â°è¾î·Î ¹ø¿ª)
-//0bjÆÄÀÏ·Î exeÆÄÀÏ »ı¼º
-//Áß°£ ´Ü°è¿¡ moc_ ~~~ .obj ==>>Áß°£ ´Ü°è¸¦ ÇÑ¹ø´õ °ÅÄ£´Ù.
-//¹®Á¦? ÄÄÆÄÀÏ ¼Óµµ°¡ ´À¸®´Ù.
+// ì†ŒìŠ¤ ì½”ë“œ -> .obj ->ì»´íŒŒì¼->ë§í¬(ê¸°ê³„ì–´ë¡œ ë²ˆì—­)
+//0bjíŒŒì¼ë¡œ exeíŒŒì¼ ìƒì„±
+//ì¤‘ê°„ ë‹¨ê³„ì— moc_ ~~~ .obj ==>>ì¤‘ê°„ ë‹¨ê³„ë¥¼ í•œë²ˆë” ê±°ì¹œë‹¤.
+//ë¬¸ì œ? ì»´íŒŒì¼ ì†ë„ê°€ ëŠë¦¬ë‹¤.
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget* parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
 
-	this->screenShot = new CScreenShot();
-	
-	// ¸ŞÀÎ À©µµ¿ìÀÇ Áß¾Ó À§Á¬À» ¼³Á¤ÇÕ´Ï´Ù.
-	QWidget* centralWidget = new QWidget(this);
-	setCentralWidget(centralWidget);
 
-	// Áß¾Ó À§Á¬ÀÇ ·¹ÀÌ¾Æ¿ôÀ» ¼³Á¤ÇÕ´Ï´Ù.
-	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
-	layout->addWidget(this->screenShot);
-	this->screenShot->setStyleSheet("background-color: steelblue;");
-	this->resize(1200, 800); // ¸ŞÀÎ À©µµ¿ìÀÇ Å©±â¸¦ ³Êºñ 1200, ³ôÀÌ 800À¸·Î Á¶Àı
+	this->widget = new In3DTestWidget(this);
+	this->widget->setGeometry(300, 100, 200, 200);
+	this->widget->resize(900, 400);
+	this->resize(1300, 700);
+	this->widget->LoadTest();
+
+
+	//ì–´ë–¤ í•¨ìˆ˜ì—ì„œ ì–´ë–»ê²Œ ì²˜ë¦¬í• ì§€
+	connect(ui.pushButton, &QPushButton::clicked, this, &QtWidgetsApplication1::test);
+	cl = vtkUnsignedCharArray::New();
+	connect(ui.pushButton_2, &QPushButton::clicked, this, &QtWidgetsApplication1::colchan);
+
 }
 
 QtWidgetsApplication1::~QtWidgetsApplication1()
-{}
+{
+}
 void QtWidgetsApplication1::colchan()
 {
 	ui.pushButton_2->setText(QCoreApplication::translate("QtWidgetsApplication1Class", "changed!", nullptr));
 
-	
+
 	cl->SetNumberOfComponents(3);
 	for (int i{}; i < this->widget->polyData->GetNumberOfPoints(); ++i)
 		cl->InsertNextTuple3(0, 0, 255);
 
 
-	// Å¬¸®ÇÎµÈ Æú¸®µ¥ÀÌÅÍ¿¡ ¸ÅÇÎµÈ »ö»ó Á¤º¸¸¦ ¼³Á¤ÇÕ´Ï´Ù.
+	// í´ë¦¬í•‘ëœ í´ë¦¬ë°ì´í„°ì— ë§¤í•‘ëœ ìƒ‰ìƒ ì •ë³´ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
 	this->widget->polyData->GetPointData()->SetScalars(cl);
 
 
@@ -50,12 +54,29 @@ void QtWidgetsApplication1::colchan()
 void QtWidgetsApplication1::test()
 {
 	ui.pushButton->setText(QCoreApplication::translate("QtWidgetsApplication1Class", "pressed", nullptr));
+	CustomInteractor inst;
 
 	this->widget->renderWindow->AddRenderer(this->widget->renderer);
-	this->widget->renderWindow->SetWindowId((void*)this->widget->winId());
-	
+	// CustomInteractor ì¸ìŠ¤í„´ìŠ¤ë¥¼ ìƒì„±í•©ë‹ˆë‹¤.
+	vtkSmartPointer<CustomInteractor> interactorInstance{ vtkSmartPointer<CustomInteractor>::New() };
+
+	// interactorInstanceë¥¼ interactorì˜ ì¸í„°ë™í„° ìŠ¤íƒ€ì¼ë¡œ ì„¤ì •í•©ë‹ˆë‹¤.
+	this->widget->interactor->SetInteractorStyle(interactorInstance);
+
+
+	this->widget->renderWindow->SetSize(1300, 700);
+
+	// CommandSubclass ì¸ìŠ¤í„´ìŠ¤ë¥¼ ìƒì„±í•˜ê³ , CustomInteractor ì¸ìŠ¤í„´ìŠ¤ë¥¼ ì „ë‹¬í•©ë‹ˆë‹¤.
+	CustomInteractor::CommandSubclass* rawCommand{ CustomInteractor::CommandSubclass::New(interactorInstance) };
+	vtkSmartPointer<CustomInteractor::CommandSubclass> myCommand{ vtkSmartPointer<CustomInteractor::CommandSubclass>::Take(rawCommand) };
+
+	// ë§ˆìš°ìŠ¤ ì™¼ìª½ ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸ì— ëŒ€í•œ ì˜µì €ë²„ë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
+	this->widget->interactor->AddObserver(vtkCommand::LeftButtonPressEvent, myCommand);
+
 	this->widget->interactor->SetRenderWindow(this->widget->renderWindow);
 
 	this->widget->renderWindow->Render();
+
 	this->widget->interactor->Start();
+
 }

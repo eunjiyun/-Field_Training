@@ -1,9 +1,9 @@
+#include <QDebug>
 #include "In3DTestWidget.h"
 
-#include <QDebug>
 
 In3DTestWidget::In3DTestWidget(QWidget* parent)
-	: QWidget(parent)
+	: QVTKOpenGLNativeWidget(parent)
 	, ui(new Ui::In3DTestWidgetClass())
 {
 	ui->setupUi(this);
@@ -20,16 +20,16 @@ void In3DTestWidget::LoadTest()
 
 	vtkSmartPointer<vtkPLYReader> reader{ vtkSmartPointer<vtkPLYReader>::New() };
 
-	reader->SetFileName(u8"C:\\Users\\dbzho\\OneDrive\\Desktop\\Field_Training\\vtk\\vtk_½Ç½À¿ë_ÇÁ·ÎÁ§Æ®\\upperJaw_1.ply");
+	reader->SetFileName(u8"C:\\Users\\dbzho\\OneDrive\\Desktop\\Field_Training\\Qt\\QtWidgetsApplication1\\upperJaw_1.ply");
 	reader->Update();
 
 	polyData = reader->GetOutput();
 
-	// Å¬¸®ÇÎ Àü RGB »ö»ó Á¤º¸¸¦ ÀúÀåÇÕ´Ï´Ù.
+	// í´ë¦¬í•‘ ì „ RGB ìƒ‰ìƒ ì •ë³´ë¥¼ ì €ì¥í•©ë‹ˆë‹¤.
 	vtkUnsignedCharArray* originalColors{ vtkUnsignedCharArray::SafeDownCast(polyData->GetPointData()->GetScalars()) };
 
 
-	// Å¬¸®ÇÎµÈ Æú¸®µ¥ÀÌÅÍÀÇ °¢ Á¡¿¡ ´ëÇÑ »õ·Î¿î RGB »ö»ó ¹è¿­À» »ı¼ºÇÕ´Ï´Ù.
+	// í´ë¦¬í•‘ëœ í´ë¦¬ë°ì´í„°ì˜ ê° ì ì— ëŒ€í•œ ìƒˆë¡œìš´ RGB ìƒ‰ìƒ ë°°ì—´ì„ ìƒì„±í•©ë‹ˆë‹¤.
 	clippedColors = vtkUnsignedCharArray::New();
 	clippedColors->SetNumberOfComponents(3); // R, G, B
 	clippedColors->SetName("Colors");
@@ -40,7 +40,7 @@ void In3DTestWidget::LoadTest()
 	hsvValues->SetNumberOfComponents(3);
 	hsvValues->SetName("HSVValues");
 
-	for (int i{}; i < originalColors->GetNumberOfTuples(); ++i){
+	for (int i{}; i < originalColors->GetNumberOfTuples(); ++i) {
 		float r{ static_cast<float>(originalColors->GetComponent(i, 0)) };
 		float g{ static_cast<float>(originalColors->GetComponent(i, 1)) };
 		float b{ static_cast<float>(originalColors->GetComponent(i, 2)) };
@@ -51,12 +51,12 @@ void In3DTestWidget::LoadTest()
 		float delta{ maxVal - minVal };
 
 		float hue, saturation, value;
-		if (0==delta ){
+		if (0 == delta) {
 			hue = 0;
 			saturation = 0;
 			value = maxVal;
 		}
-		else{
+		else {
 			if (maxVal == r)
 				hue = (g - b) / delta;
 			else if (maxVal == g)
@@ -65,55 +65,54 @@ void In3DTestWidget::LoadTest()
 				hue = 4 + (r - g) / delta;
 
 			hue *= 60;
-			if (0>hue )
+			if (0 > hue)
 				hue += 360;
 
 			saturation = delta / maxVal;
 			value = maxVal;
 		}
 
-		// º¯È¯µÈ RGB °ªÀ» vtkFloatArray¿¡ Ãß°¡ÇÕ´Ï´Ù.
+		// ë³€í™˜ëœ RGB ê°’ì„ vtkFloatArrayì— ì¶”ê°€í•©ë‹ˆë‹¤.
 		hsvValues->InsertNextTuple3(hue, saturation, value);
 	}
 
 	polyData->GetPointData()->SetScalars(hsvValues);
 
-	// Å¬¸®ÇÎÀ» ¼öÇàÇÕ´Ï´Ù.
+	// í´ë¦¬í•‘ì„ ìˆ˜í–‰í•©ë‹ˆë‹¤.
 	vtkClipPolyData* clipper{ vtkClipPolyData::New() };
 	clipper->SetInputData(polyData);
 
 	clipper->SetValue(20);
 	clipper->Update();
 
-	// Å¬¸®ÇÎµÈ Æú¸®µ¥ÀÌÅÍ¸¦ °¡Á®¿É´Ï´Ù.
+	// í´ë¦¬í•‘ëœ í´ë¦¬ë°ì´í„°ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
 	polyData = clipper->GetOutput();
 
 
 
 
-	// Å¬¸®ÇÎµÈ Æú¸®µ¥ÀÌÅÍÀÇ °¢ Á¡¿¡ ´ëÇØ °¡Àå °¡±î¿î ¿øº» Á¡ÀÇ »ö»óÀ» ¸ÅÇÎÇÕ´Ï´Ù.
+	// í´ë¦¬í•‘ëœ í´ë¦¬ë°ì´í„°ì˜ ê° ì ì— ëŒ€í•´ ê°€ì¥ ê°€ê¹Œìš´ ì›ë³¸ ì ì˜ ìƒ‰ìƒì„ ë§¤í•‘í•©ë‹ˆë‹¤.
 	for (int i{}; i < polyData->GetNumberOfPoints(); ++i)
 		clippedColors->InsertNextTuple3(255, 255, 255);
 
 
 
-	// Å¬¸®ÇÎµÈ Æú¸®µ¥ÀÌÅÍ¿¡ ¸ÅÇÎµÈ »ö»ó Á¤º¸¸¦ ¼³Á¤ÇÕ´Ï´Ù.
+	// í´ë¦¬í•‘ëœ í´ë¦¬ë°ì´í„°ì— ë§¤í•‘ëœ ìƒ‰ìƒ ì •ë³´ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
 	polyData->GetPointData()->SetScalars(clippedColors);
 
-	
+
 	// Visualize
-	mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	mapper->SetInputData(polyData);
 
-	actor = vtkSmartPointer<vtkActor>::New();
 	actor->SetMapper(mapper);
 
-	renderer = vtkSmartPointer<vtkRenderer>::New();
 	renderer->AddActor(actor);
-	vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
-	renderer->SetBackground(colors->GetColor3d("SteelBlue").GetData());
-	//QVTKOpenGLNativeWidget::interactor()->Render();
 
-	renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-	interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+	vtkSmartPointer<vtkNamedColors> colors{ vtkSmartPointer<vtkNamedColors>::New() };
+	renderer->SetBackground(colors->GetColor3d("yellow").GetData());
+
+	vtkActor* actor2 = vtkActor::New();
+	actor2->SetMapper(mapper);
+	actor2->SetPosition(500, 0, 0);
+	renderer->AddActor(actor2);
 }
