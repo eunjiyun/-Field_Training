@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>415</width>
+    <width>576</width>
     <height>400</height>
    </rect>
   </property>
@@ -14,17 +14,6 @@
    <string>QtWidgetsApplication1</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>170</y>
-      <width>160</width>
-      <height>80</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout"/>
-   </widget>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
@@ -57,7 +46,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>415</width>
+     <width>576</width>
      <height>26</height>
     </rect>
    </property>

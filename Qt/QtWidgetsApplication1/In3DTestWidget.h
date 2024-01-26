@@ -35,8 +35,10 @@ public:
 
 	vtkRenderer* renderer{ vtkRenderer::New() };
 
-	vtkRenderWindow* renderWindow{ vtkRenderWindow::New() };
+
+	vtkGenericOpenGLRenderWindow* renderWindow{ vtkGenericOpenGLRenderWindow::New() };
 	vtkRenderWindowInteractor* interactor{ vtkRenderWindowInteractor::New() };
+
 
 private:
 	Ui::In3DTestWidgetClass* ui;

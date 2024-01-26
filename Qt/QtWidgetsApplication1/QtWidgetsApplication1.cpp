@@ -1,9 +1,13 @@
 #include<iostream>
 #include "vtkInteractorObserver.h"
+
 #include "In3DVTK_Def.h"
 #include "QtWidgetsApplication1.h"
 #include "In3DTestWidget.h"
 #include "ScreenShot.h" 
+
+#include "QVTKOpenGLNativeWidget.h ";
+
 
 
 //moc : 
@@ -64,18 +68,19 @@ void QtWidgetsApplication1::test()
 	this->widget->interactor->SetInteractorStyle(interactorInstance);
 
 
-	this->widget->renderWindow->SetSize(1300, 700);
+	this->widget->setRenderWindow(this->widget->renderWindow);
+
 
 	// CommandSubclass 인스턴스를 생성하고, CustomInteractor 인스턴스를 전달합니다.
 	CustomInteractor::CommandSubclass* rawCommand{ CustomInteractor::CommandSubclass::New(interactorInstance) };
 	vtkSmartPointer<CustomInteractor::CommandSubclass> myCommand{ vtkSmartPointer<CustomInteractor::CommandSubclass>::Take(rawCommand) };
 
 	// 마우스 왼쪽 버튼 클릭 이벤트에 대한 옵저버를 추가합니다.
-	this->widget->interactor->AddObserver(vtkCommand::LeftButtonPressEvent, myCommand);
+	//this->widget->interactor->AddObserver(vtkCommand::LeftButtonPressEvent, myCommand);
 
 	this->widget->interactor->SetRenderWindow(this->widget->renderWindow);
 
-	this->widget->renderWindow->Render();
+	//this->widget->renderWindow->Render();
 
 	this->widget->interactor->Start();
 

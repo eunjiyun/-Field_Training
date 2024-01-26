@@ -76,34 +76,73 @@ void In3DTestWidget::LoadTest()
 		hsvValues->InsertNextTuple3(hue, saturation, value);
 	}
 
-	polyData->GetPointData()->SetScalars(hsvValues);
+	polyData->GetPointData()->SetScalars(originalColors);
 
-	// 클리핑을 수행합니다.
-	vtkClipPolyData* clipper{ vtkClipPolyData::New() };
-	clipper->SetInputData(polyData);
+	//// 클리핑을 수행합니다.
+	//vtkClipPolyData* clipper{ vtkClipPolyData::New() };
+	//clipper->SetInputData(polyData);
 
-	clipper->SetValue(20);
-	clipper->Update();
+	//clipper->SetValue(20);
+	//clipper->Update();
 
-	// 클리핑된 폴리데이터를 가져옵니다.
-	polyData = clipper->GetOutput();
-
-
-
-
-	// 클리핑된 폴리데이터의 각 점에 대해 가장 가까운 원본 점의 색상을 매핑합니다.
-	for (int i{}; i < polyData->GetNumberOfPoints(); ++i)
-		clippedColors->InsertNextTuple3(255, 255, 255);
+	//// 클리핑된 폴리데이터를 가져옵니다.
+	//polyData = clipper->GetOutput();
 
 
 
-	// 클리핑된 폴리데이터에 매핑된 색상 정보를 설정합니다.
-	polyData->GetPointData()->SetScalars(clippedColors);
+
+	//// 클리핑된 폴리데이터의 각 점에 대해 가장 가까운 원본 점의 색상을 매핑합니다.
+	//for (int i{}; i < polyData->GetNumberOfPoints(); ++i)
+	//	clippedColors->InsertNextTuple3(255, 255, 255);
+
+
+
+
+	//// 클리핑된 폴리데이터에 매핑된 색상 정보를 설정합니다.
+	//polyData->GetPointData()->SetScalars(clippedColors);
+
+	polyData->Print(std::cout);
+	vtkNew<vtkCurvatures> curv;
+	curv->SetInputData(polyData);
+	curv->SetCurvatureTypeToMean();
+	curv->Update();
+	polyData->DeepCopy(curv->GetOutput());
+	polyData->Print(std::cout);
+
+
+	auto curvature=polyData->GetPointData()->GetArray("Mean_Curvature");
+	auto range=curvature->GetRange();//[min : max]
+	auto min = range[0];
+	auto max = range[1];
+
+	std::vector<double> vecCurv;
+
+	std::cout << "min : " << min << '\n' << "max : " << max << endl;
+
+	for (int i{}; i < curvature->GetNumberOfTuples(); ++i) {
+		vecCurv.push_back(*curvature->GetTuple(i));
+		
+	}
+
+
+	//vtkNew<vtkLookupTable> lt;
+	vtkNew<vtkColorTransferFunction> ctf;
+	ctf->AddRGBPoint(+20, 1, 0, 0);//20 이상이면 빨강
+	ctf->AddRGBPoint(+0.0001, 0.2, 0, 0);//0.0001 부터 20이면 a,b의 선형보간
+	ctf->AddRGBPoint(0, 0, 1, 0);
+	ctf->AddRGBPoint(-0.0001, 0, 0, 0.2);
+	ctf->AddRGBPoint(-0.0001, 0, 0, 1);
+	ctf->Build();
 
 
 	// Visualize
 	mapper->SetInputData(polyData);
 
+
+	mapper->SetColorModeToMapScalars();
+	mapper->SetLookupTable(ctf);
+
+	
 	actor->SetMapper(mapper);
 
 	renderer->AddActor(actor);
@@ -111,8 +150,10 @@ void In3DTestWidget::LoadTest()
 	vtkSmartPointer<vtkNamedColors> colors{ vtkSmartPointer<vtkNamedColors>::New() };
 	renderer->SetBackground(colors->GetColor3d("yellow").GetData());
 
-	vtkActor* actor2 = vtkActor::New();
-	actor2->SetMapper(mapper);
-	actor2->SetPosition(500, 0, 0);
-	renderer->AddActor(actor2);
+	//vtkActor* actor2 {vtkActor::New()};
+
+	//actor2->SetMapper(mapper);
+	//actor2->SetPosition(500, 0, 0);
+	//renderer->AddActor(actor2);
+
 }
