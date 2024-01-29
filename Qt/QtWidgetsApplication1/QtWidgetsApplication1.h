@@ -1,5 +1,4 @@
 #pragma once
-#include <QtWidgets/QMainWindow>
 #include <vtkSmartPointer.h>
 #include <vtkPLYReader.h>
 #include <vtkPolyData.h>
@@ -8,15 +7,17 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkInteractorStyleTrackballCamera.h>
+
+#include <QtWidgets/QMainWindow>
 
 #include "ui_QtWidgetsApplication1.h"
 
-#include <vtkInteractorStyleTrackballCamera.h>
+
 
 
 class In3DTestWidget;
 class CScreenShot;
-
 
 
 // CustomInteractor 클래스 내부에 CommandSubclass 정의
@@ -49,11 +50,12 @@ public:
 
 		void Execute(vtkObject* caller, unsigned long eventId, void* callData) override
 		{
-			std::cout << "!!";
+			cout << "left button pressed!" << endl;
 			self->OnLeftButtonDown();
 		}
 	};
 };
+
 
 class QtWidgetsApplication1 : public QMainWindow//메인 윈도우
 {
@@ -67,11 +69,16 @@ public:
 public:
 	void test();
 	void colchan();
-
+	void setLight();
 public:
 
+
 	In3DTestWidget* widget;
+	
 	vtkUnsignedCharArray* cl;
+
+	QWidget* scShot;
+	CScreenShot* screenShot;
 
 private:
 	Ui::QtWidgetsApplication1Class ui;

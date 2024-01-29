@@ -3,7 +3,6 @@
 #include <QWidget>
 #include "ui_In3DTestWidget.h"
 #include "In3DVTK_Def.h"
-
 #include "QtWidgetsApplication1.h"
 
 
@@ -34,7 +33,8 @@ public:
 	vtkActor* actor{ vtkActor::New() };
 
 	vtkRenderer* renderer{ vtkRenderer::New() };
-
+	vtkSmartPointer<vtkLight> light{ vtkSmartPointer<vtkLight>::New() };
+	float intensity{};
 
 	vtkGenericOpenGLRenderWindow* renderWindow{ vtkGenericOpenGLRenderWindow::New() };
 	vtkRenderWindowInteractor* interactor{ vtkRenderWindowInteractor::New() };

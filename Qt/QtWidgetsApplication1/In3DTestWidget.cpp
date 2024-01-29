@@ -110,28 +110,27 @@ void In3DTestWidget::LoadTest()
 	polyData->Print(std::cout);
 
 
-	auto curvature=polyData->GetPointData()->GetArray("Mean_Curvature");
-	auto range=curvature->GetRange();//[min : max]
-	auto min = range[0];
-	auto max = range[1];
+	auto curvature{ polyData->GetPointData()->GetArray("Mean_Curvature") };
+	auto range{ curvature->GetRange() };//[min : max]
+	auto min{ range[0] };
+	auto max{ range[1] };
 
 	std::vector<double> vecCurv;
 
 	std::cout << "min : " << min << '\n' << "max : " << max << endl;
 
-	for (int i{}; i < curvature->GetNumberOfTuples(); ++i) {
+	for (int i{}; i < curvature->GetNumberOfTuples(); ++i) 
 		vecCurv.push_back(*curvature->GetTuple(i));
-		
-	}
+
 
 
 	//vtkNew<vtkLookupTable> lt;
 	vtkNew<vtkColorTransferFunction> ctf;
-	ctf->AddRGBPoint(+20, 1, 0, 0);//20 이상이면 빨강
-	ctf->AddRGBPoint(+0.0001, 0.2, 0, 0);//0.0001 부터 20이면 a,b의 선형보간
+	//ctf->AddRGBPoint(+20, 1, 0, 0);//20 이상이면 빨강
+	ctf->AddRGBPoint(+0.0001, 1, 0, 0);//0.0001 부터 20이면 a,b의 선형보간
 	ctf->AddRGBPoint(0, 0, 1, 0);
-	ctf->AddRGBPoint(-0.0001, 0, 0, 0.2);
 	ctf->AddRGBPoint(-0.0001, 0, 0, 1);
+	//ctf->AddRGBPoint(-0.0001, 0, 0, 1);
 	ctf->Build();
 
 
@@ -147,13 +146,20 @@ void In3DTestWidget::LoadTest()
 
 	renderer->AddActor(actor);
 
+	// vtkLight 객체를 생성합니다.
+	
+
+	// 조명의 위치를 설정합니다.
+	light->SetPosition(1.0, 2.0, 3.0);
+
+	// 조명의 색상을 설정합니다. 이 경우 RGB 값이 모두 1이므로 흰색 조명이 됩니다.
+	light->SetColor(1.0, 1.0, 1.0);
+
+	// 조명의 밝기를 설정합니다.
+	light->SetIntensity(1.0);
+
+	renderer->AddLight(light);
+
 	vtkSmartPointer<vtkNamedColors> colors{ vtkSmartPointer<vtkNamedColors>::New() };
 	renderer->SetBackground(colors->GetColor3d("yellow").GetData());
-
-	//vtkActor* actor2 {vtkActor::New()};
-
-	//actor2->SetMapper(mapper);
-	//actor2->SetPosition(500, 0, 0);
-	//renderer->AddActor(actor2);
-
 }
