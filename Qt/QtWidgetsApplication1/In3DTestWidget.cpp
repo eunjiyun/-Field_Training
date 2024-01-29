@@ -128,7 +128,7 @@ void In3DTestWidget::LoadTest()
 	vtkNew<vtkColorTransferFunction> ctf;
 	//ctf->AddRGBPoint(+20, 1, 0, 0);//20 이상이면 빨강
 	ctf->AddRGBPoint(+0.0001, 1, 0, 0);//0.0001 부터 20이면 a,b의 선형보간
-	ctf->AddRGBPoint(0, 0, 1, 0);
+	ctf->AddRGBPoint(-0.00005, 0, 1, 0);
 	ctf->AddRGBPoint(-0.0001, 0, 0, 1);
 	//ctf->AddRGBPoint(-0.0001, 0, 0, 1);
 	ctf->Build();
@@ -143,6 +143,17 @@ void In3DTestWidget::LoadTest()
 
 	
 	actor->SetMapper(mapper);
+
+	auto sp{ actor->GetShaderProperty() };
+
+	auto un{ sp->GetFragmentCustomUniforms() };
+	un->SetUniform("u_color", vtkUniforms::TupleTypeVector, 3, std::vector<float>{1.0, 0.0, 0.0});
+	sp->AddFragmentShaderReplacement(
+		"//VTK::Coincident::Impl",                        
+		true,
+		"fragOutput0.a=0.5f;",                      
+		true
+	);
 
 	renderer->AddActor(actor);
 
