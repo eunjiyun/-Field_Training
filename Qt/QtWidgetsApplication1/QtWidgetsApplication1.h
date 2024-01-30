@@ -70,6 +70,7 @@ public:
 	void test();
 	void colchan();
 	void setLight();
+	void blend();
 public:
 
 

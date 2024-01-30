@@ -24,10 +24,10 @@
 
 
 //moc : 
-// ?�스 코드 -> .obj ->컴파??>링크(기계?�로 번역)
-//0bj?�일�?exe?�일 ?�성
-//중간 ?�계??moc_ ~~~ .obj ==>>중간 ?�계�??�번??거친??
-//문제? 컴파???�도가 ?�리??
+// ?뚯뒪 肄붾뱶 -> .obj ->而댄뙆??>留곹겕(湲곌퀎?대줈 踰덉뿭)
+//0bj?뚯씪濡?exe?뚯씪 ?앹꽦
+//以묎컙 ?④퀎??moc_ ~~~ .obj ==>>以묎컙 ?④퀎瑜??쒕쾲??嫄곗튇??
+//臾몄젣? 而댄뙆???띾룄媛 ?먮━??
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget* parent)
 	: QMainWindow(parent)
 {
@@ -48,12 +48,13 @@ QtWidgetsApplication1::QtWidgetsApplication1(QWidget* parent)
 	this->widget->LoadTest();
 
 
-	//?�떤 ?�수?�서 ?�떻�?처리?��?
+	//?대뼡 ?⑥닔?먯꽌 ?대뼸寃?泥섎━?좎?
 	connect(ui.pushButton, &QPushButton::clicked, this, &QtWidgetsApplication1::test);
 	cl = vtkUnsignedCharArray::New();
 	connect(ui.pushButton_2, &QPushButton::clicked, this, &QtWidgetsApplication1::colchan);
 	//horizontalSlider
 	connect(ui.horizontalSlider, &QSlider::valueChanged, this, &QtWidgetsApplication1::setLight);
+	connect(ui.pushButton_3, &QPushButton::clicked, this, &QtWidgetsApplication1::blend);
 }
 
 QtWidgetsApplication1::~QtWidgetsApplication1()
@@ -66,7 +67,7 @@ void QtWidgetsApplication1::colchan()
 
 	this->screenShot = new CScreenShot();
 	
-	// �߾� ������ ���̾ƿ��� �����մϴ�.
+	// 중앙 위젯의 레이아웃을 설정합니다.
 	QVBoxLayout* layout{ new QVBoxLayout(scShot) };
 	layout->addWidget(this->screenShot);
 	this->screenShot->setStyleSheet("background-color: steelblue;");
@@ -77,7 +78,7 @@ void QtWidgetsApplication1::test()
 	ui.pushButton->setText(QCoreApplication::translate("QtWidgetsApplication1Class", "start!", nullptr));
 
 	this->widget->renderWindow->AddRenderer(this->widget->renderer);
-	// CustomInteractor ?�스?�스�??�성?�니??
+	// CustomInteractor ?몄뒪?댁뒪瑜??앹꽦?⑸땲??
 	vtkSmartPointer<CustomInteractor> interactorInstance{ vtkSmartPointer<CustomInteractor>::New() };
 
 
@@ -86,11 +87,11 @@ void QtWidgetsApplication1::test()
 	this->widget->setRenderWindow(this->widget->renderWindow);
 
 
-	// CommandSubclass ?�스?�스�??�성?�고, CustomInteractor ?�스?�스�??�달?�니??
+	// CommandSubclass ?몄뒪?댁뒪瑜??앹꽦?섍퀬, CustomInteractor ?몄뒪?댁뒪瑜??꾨떖?⑸땲??
 	CustomInteractor::CommandSubclass* rawCommand{ CustomInteractor::CommandSubclass::New(interactorInstance) };
 	vtkSmartPointer<CustomInteractor::CommandSubclass> myCommand{ vtkSmartPointer<CustomInteractor::CommandSubclass>::Take(rawCommand) };
 
-	// 마우???�쪽 버튼 ?�릭 ?�벤?�에 ?�???��?버�? 추�??�니??
+	// 留덉슦???쇱そ 踰꾪듉 ?대┃ ?대깽?몄뿉 ????듭?踰꾨? 異붽??⑸땲??
 	this->widget->interactor->AddObserver(vtkCommand::LeftButtonPressEvent, myCommand);
 
 	this->widget->interactor->SetRenderWindow(this->widget->renderWindow);
@@ -105,4 +106,21 @@ void QtWidgetsApplication1::setLight()
 	this->widget->intensity = ui.horizontalSlider->value()/(float)10.f;
 
 	this->widget->light->SetIntensity(this->widget->intensity);
+}
+
+void QtWidgetsApplication1::blend()
+{
+	ui.pushButton_3->setText(QCoreApplication::translate("QtWidgetsApplication1Class", "Transparent!", nullptr));
+	
+
+	auto sp{ widget->actor->GetShaderProperty() };
+
+	auto un{ sp->GetFragmentCustomUniforms() };
+	un->SetUniform("u_color", vtkUniforms::TupleTypeVector, 3, std::vector<float>{1.0, 0.0, 0.0});
+	sp->AddFragmentShaderReplacement(
+		"//VTK::Coincident::Impl",
+		true,
+		"fragOutput0.a=0.5f;",
+		true
+	);
 }

@@ -144,7 +144,7 @@ void In3DTestWidget::LoadTest()
 	
 	actor->SetMapper(mapper);
 
-	auto sp{ actor->GetShaderProperty() };
+	/*auto sp{ actor->GetShaderProperty() };
 
 	auto un{ sp->GetFragmentCustomUniforms() };
 	un->SetUniform("u_color", vtkUniforms::TupleTypeVector, 3, std::vector<float>{1.0, 0.0, 0.0});
@@ -153,7 +153,7 @@ void In3DTestWidget::LoadTest()
 		true,
 		"fragOutput0.a=0.5f;",                      
 		true
-	);
+	);*/
 
 	renderer->AddActor(actor);
 
