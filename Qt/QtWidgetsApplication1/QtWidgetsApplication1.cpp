@@ -110,17 +110,35 @@ void QtWidgetsApplication1::setLight()
 
 void QtWidgetsApplication1::blend()
 {
-	ui.pushButton_3->setText(QCoreApplication::translate("QtWidgetsApplication1Class", "Transparent!", nullptr));
+	if (!transparent) {
+		ui.pushButton_3->setText(QCoreApplication::translate("QtWidgetsApplication1Class", "transparent!", nullptr));
+		transparent = true;
+		auto sp{ widget->actor->GetShaderProperty() };
+
+		//auto un{ sp->GetFragmentCustomUniforms() };
+		//un->SetUniform("u_color", vtkUniforms::TupleTypeVector, 3, std::vector<float>{1.0, 0.0, 0.0});
+		sp->AddFragmentShaderReplacement(
+			"//VTK::Coincident::Impl",
+			true,
+			"fragOutput0.a=0.5f;",
+			true
+		);
+	}
+	else {
+		ui.pushButton_3->setText(QCoreApplication::translate("QtWidgetsApplication1Class", "non", nullptr));
+		transparent = false;
+		auto sp{ widget->actor->GetShaderProperty() };
+
+		//auto un{ sp->GetFragmentCustomUniforms() };
+		//un->SetUniform("u_color", vtkUniforms::TupleTypeVector, 3, std::vector<float>{1.0, 0.0, 0.0});
+		sp->AddFragmentShaderReplacement(
+			"//VTK::Coincident::Impl",
+			true,
+			"fragOutput0.a=1.0f;",
+			true
+		);
+	}
 	
 
-	auto sp{ widget->actor->GetShaderProperty() };
-
-	auto un{ sp->GetFragmentCustomUniforms() };
-	un->SetUniform("u_color", vtkUniforms::TupleTypeVector, 3, std::vector<float>{1.0, 0.0, 0.0});
-	sp->AddFragmentShaderReplacement(
-		"//VTK::Coincident::Impl",
-		true,
-		"fragOutput0.a=0.5f;",
-		true
-	);
+	
 }

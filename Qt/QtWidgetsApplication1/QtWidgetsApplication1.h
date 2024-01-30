@@ -81,6 +81,8 @@ public:
 	QWidget* scShot;
 	CScreenShot* screenShot;
 
+	bool transparent{};
+
 private:
 	Ui::QtWidgetsApplication1Class ui;
 

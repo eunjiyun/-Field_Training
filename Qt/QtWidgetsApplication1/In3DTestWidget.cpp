@@ -1,4 +1,6 @@
 #include <QDebug>
+#include <cmath>
+#include <numeric>
 #include "In3DTestWidget.h"
 
 
@@ -111,14 +113,7 @@ void In3DTestWidget::LoadTest()
 
 
 	auto curvature{ polyData->GetPointData()->GetArray("Mean_Curvature") };
-	auto range{ curvature->GetRange() };//[min : max]
-	auto min{ range[0] };
-	auto max{ range[1] };
-
 	std::vector<double> vecCurv;
-
-	std::cout << "min : " << min << '\n' << "max : " << max << endl;
-
 	for (int i{}; i < curvature->GetNumberOfTuples(); ++i) 
 		vecCurv.push_back(*curvature->GetTuple(i));
 
@@ -126,11 +121,20 @@ void In3DTestWidget::LoadTest()
 
 	//vtkNew<vtkLookupTable> lt;
 	vtkNew<vtkColorTransferFunction> ctf;
-	//ctf->AddRGBPoint(+20, 1, 0, 0);//20 이상이면 빨강
-	ctf->AddRGBPoint(+0.0001, 1, 0, 0);//0.0001 부터 20이면 a,b의 선형보간
-	ctf->AddRGBPoint(-0.00005, 0, 1, 0);
-	ctf->AddRGBPoint(-0.0001, 0, 0, 1);
-	//ctf->AddRGBPoint(-0.0001, 0, 0, 1);
+
+	double mean{ std::accumulate(vecCurv.begin(), vecCurv.end(), 0.0) / vecCurv.size() };
+
+	double sq_sum{ std::inner_product(vecCurv.begin(), vecCurv.end(), vecCurv.begin(), 0.0) };
+	double std_dev{ std::sqrt(sq_sum / vecCurv.size() - mean * mean) };
+
+	std::cout << "Mean : " << mean << '\n' << "Standard Deviation : " << std_dev << std::endl;
+
+
+	ctf->AddRGBPoint(mean - std_dev, 1, 0, 0); // 표준편차만큼 평균보다 낮은 굴곡률을 파란색으로
+	ctf->AddRGBPoint(mean, 0, 1, 0); // 평균 굴곡률을 초록색으로
+	ctf->AddRGBPoint(mean + std_dev, 0, 0, 1);
+
+
 	ctf->Build();
 
 
@@ -143,17 +147,6 @@ void In3DTestWidget::LoadTest()
 
 	
 	actor->SetMapper(mapper);
-
-	/*auto sp{ actor->GetShaderProperty() };
-
-	auto un{ sp->GetFragmentCustomUniforms() };
-	un->SetUniform("u_color", vtkUniforms::TupleTypeVector, 3, std::vector<float>{1.0, 0.0, 0.0});
-	sp->AddFragmentShaderReplacement(
-		"//VTK::Coincident::Impl",                        
-		true,
-		"fragOutput0.a=0.5f;",                      
-		true
-	);*/
 
 	renderer->AddActor(actor);
 
