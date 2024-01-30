@@ -105,7 +105,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CustomColorTransferFunctio.cpp" />
     <ClCompile Include="ScreenShot.cpp" />
+    <ClCompile Include="vtkCIEDE2000.cxx" />
     <QtRcc Include="QtWidgetsApplication1.qrc" />
     <QtUic Include="In3DTestWidget.ui" />
     <QtUic Include="QtWidgetsApplication1.ui" />
@@ -119,6 +121,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="ScreenShot.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CustomColorTransferFunction.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

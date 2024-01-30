@@ -24,8 +24,7 @@ public:
 	void LoadTest();
 
 public:
-	vtkFloatArray* hsvValues;
-	vtkUnsignedCharArray* clippedColors;
+	vtkFloatArray* hsvValues{ vtkFloatArray::New() };
 	vtkPolyData* polyData;
 
 	vtkPolyDataMapper* mapper{ vtkPolyDataMapper::New() };
@@ -34,12 +33,20 @@ public:
 
 	vtkRenderer* renderer{ vtkRenderer::New() };
 	vtkSmartPointer<vtkLight> light{ vtkSmartPointer<vtkLight>::New() };
-	float intensity{};
+	
 
 	vtkGenericOpenGLRenderWindow* renderWindow{ vtkGenericOpenGLRenderWindow::New() };
 	vtkRenderWindowInteractor* interactor{ vtkRenderWindowInteractor::New() };
 
+public:
+	double mean;
 
+	double sq_sum;
+	double std_dev;
+	bool cur{};
+	bool transparent{};
+	bool clipped{};
+	float intensity{};
 private:
 	Ui::In3DTestWidgetClass* ui;
 };

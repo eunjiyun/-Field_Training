@@ -6,28 +6,29 @@
 #include <QPushButton>
 class CScreenShot : public QWidget
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    CScreenShot();
+	CScreenShot();
 
 protected:
-    void resizeEvent(QResizeEvent* event) override;
+	void resizeEvent(QResizeEvent* event) override;
 
 private slots:
-    void newScreenshot();
-    void saveScreenshot();
-    void shootScreen();
-    void updateCheckBox();
+	void newScreenshot();
+	void saveScreenshot();
+	void shootScreen();
+	void updateCheckBox();
 
 private:
-    void updateScreenshotLabel();
+	void updateScreenshotLabel();
 
-    QPixmap originalPixmap;
+public:
+	QPixmap originalPixmap;
 
-    QLabel* screenshotLabel;
-    QSpinBox* delaySpinBox;
-    QCheckBox* hideThisWindowCheckBox;
-    QPushButton* newScreenshotButton;
+	QLabel* screenshotLabel;
+	QSpinBox* delaySpinBox;
+	QCheckBox* hideThisWindowCheckBox;
+	QPushButton* newScreenshotButton;
 };
 

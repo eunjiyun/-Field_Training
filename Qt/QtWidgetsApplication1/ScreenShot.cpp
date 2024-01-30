@@ -132,7 +132,7 @@ void CScreenShot::shootScreen()
 	if (delaySpinBox->value() != 0)
 		QApplication::beep();
 
-	
+
 
 	originalPixmap = screen->grabWindow(0);
 
@@ -151,11 +151,11 @@ void CScreenShot::shootScreen()
 void CScreenShot::updateCheckBox()
 {
 
-	if (0==delaySpinBox->value() ) {
+	if (0 == delaySpinBox->value()) {
 		hideThisWindowCheckBox->setDisabled(true);
 		hideThisWindowCheckBox->setChecked(false);
 	}
-	else 
+	else
 		hideThisWindowCheckBox->setDisabled(false);
 
 }

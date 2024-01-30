@@ -50,7 +50,7 @@ public:
 
 		void Execute(vtkObject* caller, unsigned long eventId, void* callData) override
 		{
-			cout << "left button pressed!" << endl;
+			//cout << "left button pressed!" << endl;
 			self->OnLeftButtonDown();
 		}
 	};
@@ -68,20 +68,19 @@ public:
 
 public:
 	void test();
-	void colchan();
+	void capture();
 	void setLight();
 	void blend();
+	void curve();
+	void clip();
 public:
 
 
 	In3DTestWidget* widget;
-	
-	vtkUnsignedCharArray* cl;
 
 	QWidget* scShot;
 	CScreenShot* screenShot;
 
-	bool transparent{};
 
 private:
 	Ui::QtWidgetsApplication1Class ui;
