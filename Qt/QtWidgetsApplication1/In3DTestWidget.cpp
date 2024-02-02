@@ -28,7 +28,7 @@ void In3DTestWidget::LoadTest()
 	polyData = reader->GetOutput();
 
 	// 클리핑 전 RGB 색상 정보를 저장합니다.
-	vtkUnsignedCharArray* originalColors{ vtkUnsignedCharArray::SafeDownCast(polyData->GetPointData()->GetScalars()) };
+	originalColors = (vtkDoubleArray*)polyData->GetPointData()->GetScalars();
 
 
 	// Create a new array to store the HSV values

@@ -49,7 +49,7 @@
     <ClCompile Include="CustomColorTransferFunctio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="vtkCIEDE2000.cxx">
+    <ClCompile Include="vtkCIEDE2000.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

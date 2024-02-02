@@ -1,11 +1,7 @@
-
 #include <QVBoxLayout>
 #include <QLabel>
-
 #include<iostream>
-
 #include "vtkInteractorObserver.h"
-
 #include "QVTKOpenGLNativeWidget.h ";
 #include "QtWidgetsApplication1.h"
 #include "In3DVTK_Def.h"
@@ -123,8 +119,6 @@ void QtWidgetsApplication1::blend()
 		widget->transparent = false;
 		auto sp{ widget->actor->GetShaderProperty() };
 
-		//auto un{ sp->GetFragmentCustomUniforms() };
-		//un->SetUniform("u_color", vtkUniforms::TupleTypeVector, 3, std::vector<float>{1.0, 0.0, 0.0});
 		sp->AddFragmentShaderReplacement(
 			"//VTK::Coincident::Impl",
 			true,
@@ -147,32 +141,39 @@ void QtWidgetsApplication1::curve()
 		curv->SetCurvatureTypeToMean();
 		curv->Update();
 		widget->polyData->DeepCopy(curv->GetOutput());
-		//widget->polyData->Print(std::cout);
 
 
 		auto curvature{ widget->polyData->GetPointData()->GetArray("Mean_Curvature") };
-		std::vector<double> vecCurv;
-		for (int i{}; i < curvature->GetNumberOfTuples(); ++i)
-			vecCurv.push_back(*curvature->GetTuple(i));
 
+		vtkDoubleArray* curvArr{ vtkDoubleArray::New() };
 
+		for (int i{}; i < curvature->GetNumberOfTuples(); ++i) 
+			curvArr->InsertNextTuple1(*curvature->GetTuple(i));
+		
+		
+		double sum{};
+		for (vtkIdType i{}; i < curvArr->GetNumberOfTuples(); ++i) 
+			sum += curvArr->GetValue(i);
+		
 
-		//vtkNew<vtkLookupTable> lt;
-		//vtkNew<vtkColorTransferFunction> ctf;
+		double mean{ sum / curvArr->GetNumberOfTuples() };
 
-		widget->mean = std::accumulate(vecCurv.begin(), vecCurv.end(), 0.0) / vecCurv.size();
+		double sumSquaredDiffs{};
+		//Calculate the sum of squared differences
 
-		widget->sq_sum = std::inner_product(vecCurv.begin(), vecCurv.end(), vecCurv.begin(), 0.0);
-		widget->std_dev = std::sqrt(widget->sq_sum / vecCurv.size() - widget->mean * widget->mean);
+		for (vtkIdType i{}; i < curvArr->GetNumberOfTuples(); ++i) {
+			double diff{ curvArr->GetValue(i) - mean };
+			sumSquaredDiffs += diff * diff;
+		}
 
-		//std::cout << "Mean : " << widget->mean << '\n' << "Standard Deviation : " << widget->std_dev << std::endl;
+		// Calculate the sample standard deviation
+		double stdDev{ std::sqrt(sumSquaredDiffs / (curvArr->GetNumberOfTuples() - 1)) };
 
+		ctf->SetColorSpaceToLab();
 
+		
+		ctf->AddRGBPoints(curvArr, widget->originalColors); 
 
-		ctf->AddRGBPoint(widget->mean - widget->std_dev, 1, 0, 0); // 표준편차만큼 평균보다 낮은 굴곡률을 파란색으로
-		ctf->AddRGBPoint(widget->mean, 0, 1, 0); // 평균 굴곡률을 초록색으로
-		ctf->AddRGBPoint(widget->mean + widget->std_dev, 0, 0, 1);
-		ctf->SetColorSpace(VTK_CTF_LAB);
 
 		ctf->Build();
 
@@ -232,10 +233,7 @@ void QtWidgetsApplication1::clip()
 
 		// 클리핑된 폴리데이터의 각 점에 대해 가장 가까운 원본 점의 색상을 매핑합니다.
 		for (int i{}; i < widget->polyData->GetNumberOfPoints(); ++i)
-			clippedColors->InsertNextTuple3(255,
-				255, 255);
-
-
+			clippedColors->InsertNextTuple3(255,255, 255);
 
 
 		// 클리핑된 폴리데이터에 매핑된 색상 정보를 설정합니다.
@@ -280,5 +278,4 @@ void QtWidgetsApplication1::clip()
 
 		widget->renderer->AddActor(widget->actor);
 	}
-
 }

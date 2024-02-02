@@ -49,6 +49,7 @@ void MapColor(double rgb[3])
   Position pos;
   getPosition(rgb, pos);
   getRGBColor(pos, rgb);
+  //cout << "5th" << endl;
 }
 
 //------------------------------------------------------------------------------
@@ -230,7 +231,7 @@ double GetColorPath(
   Position pos1, pos2;
   getPosition(rgb1, pos1);
   getPosition(rgb2, pos2);
-
+ // cout << "3rd" << endl;
   // Use Dijkstra's algorithm backwards to calculate the shortest distances from
   // the second color
 

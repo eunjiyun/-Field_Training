@@ -107,7 +107,7 @@
   <ItemGroup>
     <ClCompile Include="CustomColorTransferFunctio.cpp" />
     <ClCompile Include="ScreenShot.cpp" />
-    <ClCompile Include="vtkCIEDE2000.cxx" />
+    <ClCompile Include="vtkCIEDE2000.cpp" />
     <QtRcc Include="QtWidgetsApplication1.qrc" />
     <QtUic Include="In3DTestWidget.ui" />
     <QtUic Include="QtWidgetsApplication1.ui" />

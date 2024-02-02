@@ -25,6 +25,7 @@ public:
 
 public:
 	vtkFloatArray* hsvValues{ vtkFloatArray::New() };
+	vtkDoubleArray* originalColors{ vtkDoubleArray::New() };
 	vtkPolyData* polyData;
 
 	vtkPolyDataMapper* mapper{ vtkPolyDataMapper::New() };
@@ -39,10 +40,6 @@ public:
 	vtkRenderWindowInteractor* interactor{ vtkRenderWindowInteractor::New() };
 
 public:
-	double mean;
-
-	double sq_sum;
-	double std_dev;
 	bool cur{};
 	bool transparent{};
 	bool clipped{};

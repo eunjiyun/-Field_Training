@@ -143,10 +143,10 @@ inline double vtkColorTransferFunctionAdjustHue(const double msh[3], double unsa
 inline void vtkColorTransferFunctionInterpolateDiverging(
   double s, const double rgb1[3], const double rgb2[3], double result[3])
 {
+
   double lab1[3], lab2[3];
   vtkMath::RGBToLab(rgb1, lab1);
   vtkMath::RGBToLab(rgb2, lab2);
-
   double msh1[3], msh2[3];
   vtkColorTransferFunctionLabToMsh(lab1, msh1);
   vtkColorTransferFunctionLabToMsh(lab2, msh2);
@@ -197,15 +197,14 @@ inline void vtkColorTransferFunctionInterpolateDiverging(
   double labTmp[3];
   vtkColorTransferFunctionMshToLab(mshTmp, labTmp);
   vtkMath::LabToRGB(labTmp, result);
+
 }
 
-//240130
 // Interpolate a LAB/CIEDE2000 color map.
 inline void vtkColorTransferFunctionInterpolateLABCIEDE2000(double s, const double rgb1[3],
   const double rgb2[3], double result[3], vtkSmartPointer<CustomColorTransferFunction>& cachedPathCTF,
   bool forceExactSupportColors = false)
 {
-    cout << "hihi" << endl;
   if (!forceExactSupportColors)
   {
     CIEDE2000::MapColor(const_cast<double*>(rgb1));
@@ -232,11 +231,15 @@ inline void vtkColorTransferFunctionInterpolateLABCIEDE2000(double s, const doub
       // Remove the old nodes from the path's color transfer function
       cachedPathCTF->RemoveAllPoints();
     }
+
+
     cachedPathCTF->SetColorSpaceToLab();
+
 
     // Get the shortest color path and its overall length
     std::vector<CIEDE2000::Node> path;
     double pathDistance = CIEDE2000::GetColorPath(rgb1, rgb2, path, forceExactSupportColors);
+
 
     // Add the nodes of the new path to the path's color transfer function
     for (const auto& node : path)
@@ -295,7 +298,7 @@ CustomColorTransferFunction::CustomColorTransferFunction()
   this->Table = nullptr;
   this->TableSize = 0;
 
-  this->AllowDuplicateScalars = 0;
+  this->AllowDuplicateScalars = true;
 
   this->Internal = new vtkColorTransferFunctionInternals;
 }
@@ -352,7 +355,6 @@ double* CustomColorTransferFunction::GetDataPointer()
 // Add a point defined in RGB
 int CustomColorTransferFunction::AddRGBPoint(double x, double r, double g, double b)
 {
-
   return this->AddRGBPoint(x, r, g, b, 0.5, 0.0);
 }
 
@@ -476,15 +478,20 @@ int CustomColorTransferFunction::AddRGBPoints(
   }
 
   auto numNodes = x->GetNumberOfValues();
+
   for (vtkIdType i = 0; i < numNodes; i++)
   {
     // Create the new node
     vtkCTFNode* node = new vtkCTFNode;
     node->X = x->GetValue(i);
+
     auto rgb = rgbColors->GetTuple3(i);
-    node->R = rgb[0];
-    node->G = rgb[1];
-    node->B = rgb[2];
+
+
+    node->R =  rgb[0]/255.0;
+    node->G = rgb[1] / 255.0;
+    node->B =  rgb[2] / 255.0;
+
     node->Midpoint = midpoint;
     node->Sharpness = sharpness;
 
@@ -768,16 +775,16 @@ double CustomColorTransferFunction::GetBlueValue(double x)
 {
   double rgb[3];
   this->GetColor(x, rgb);
-
   return rgb[2];
 }
 
 //------------------------------------------------------------------------------
 // Returns a table of RGB colors at regular intervals along the function
+
+
 void CustomColorTransferFunction::GetTable(double xStart, double xEnd, int size, double* table)
 {
   int i, j;
-
   // Special case: If either the start or end is a NaN, then all any
   // interpolation done on them is also a NaN.  Therefore, fill the table with
   // the NaN color.
@@ -808,6 +815,7 @@ void CustomColorTransferFunction::GetTable(double xStart, double xEnd, int size,
     lastR = this->Internal->Nodes[numNodes - 1]->R;
     lastG = this->Internal->Nodes[numNodes - 1]->G;
     lastB = this->Internal->Nodes[numNodes - 1]->B;
+
   }
 
   double* tptr = nullptr;
@@ -841,84 +849,117 @@ void CustomColorTransferFunction::GetTable(double xStart, double xEnd, int size,
   // For each table entry
   for (i = 0; i < size; i++)
   {
+      // Find our location in the table
+      tptr = table + 3 * i;
 
-    // Find our location in the table
-    tptr = table + 3 * i;
-
-    // Find our X location. If we are taking only 1 sample, make
-    // it halfway between start and end (usually start and end will
-    // be the same in this case)
-    if (size > 1)
-    {
-      if (usingLogScale)
+      // Find our X location. If we are taking only 1 sample, make
+      // it halfway between start and end (usually start and end will
+      // be the same in this case)
+      if (size > 1)
       {
-        logX =
-          logStart + (static_cast<double>(i) / static_cast<double>(size - 1)) * (logEnd - logStart);
-        x = pow(static_cast<double>(10.0), logX);
+          if (usingLogScale)
+          {
+              logX =
+                  logStart + (static_cast<double>(i) / static_cast<double>(size - 1)) * (logEnd - logStart);
+              x = pow(static_cast<double>(10.0), logX);
+          }
+          else
+          {
+              x = xStart + (static_cast<double>(i) / static_cast<double>(size - 1)) * (xEnd - xStart);
+          }
       }
       else
       {
-        x = xStart + (static_cast<double>(i) / static_cast<double>(size - 1)) * (xEnd - xStart);
+          if (usingLogScale)
+          {
+              logX = 0.5 * (logStart + logEnd);
+              x = pow(static_cast<double>(10.0), logX);
+          }
+          else
+              x = 0.5 * (xStart + xEnd);
       }
-    }
-    else
-    {
-      if (usingLogScale)
+      // Do we need to move to the next node?
+      while (idx < numNodes && x > this->Internal->Nodes[idx]->X)
       {
-        logX = 0.5 * (logStart + logEnd);
-        x = pow(static_cast<double>(10.0), logX);
+          idx++;
+          // If we are at a valid point index, fill in
+          // the value at this node, and the one before (the
+          // two that surround our current sample location)
+          // idx cannot be 0 since we just incremented it.
+          if (idx < numNodes)
+          {
+              x1 = this->Internal->Nodes[idx - 1]->X;
+              x2 = this->Internal->Nodes[idx]->X;
+              if (usingLogScale)
+              {
+                  x1 = log10(x1);
+                  x2 = log10(x2);
+              }
+              rgb1[0] = this->Internal->Nodes[idx - 1]->R;
+              rgb2[0] = this->Internal->Nodes[idx]->R;
+              rgb1[1] = this->Internal->Nodes[idx - 1]->G;
+              rgb2[1] = this->Internal->Nodes[idx]->G;
+              rgb1[2] = this->Internal->Nodes[idx - 1]->B;
+              rgb2[2] = this->Internal->Nodes[idx]->B;
+              // We only need the previous midpoint and sharpness
+              // since these control this region
+              midpoint = this->Internal->Nodes[idx - 1]->Midpoint;
+              sharpness = this->Internal->Nodes[idx - 1]->Sharpness;
+
+              // Move midpoint away from extreme ends of range to avoid
+              // degenerate math
+              if (midpoint < 0.00001)
+              {
+                  midpoint = 0.00001;
+              }
+              if (midpoint > 0.99999)
+              {
+                  midpoint = 0.99999;
+              }
+          }
+      }
+
+ /* 
+ sortO
+ ave: -0.213924
+ stdDev : 0.120671
+
+      sortX
+ave : 0.00497756
+stdDev : 0.018671
+
+origin
+  Mean: 0.00097594
+  Standard Deviation : 0.0288929*/
+
+      double mean{ 0.00097594 };
+      double stdDev{ 0.0288929 };
+
+      // Check if the scalar value is below the threshold
+      if (mean + stdDev<=x  )//슈도컬러
+      {
+          tptr[0] = 0.4;
+          tptr[1] = 0.4;
+          tptr[2] = 1;
+
+          return;
+      }
+      else if (mean - stdDev >x)//슈도컬러
+      {
+          tptr[0] = 1;
+          tptr[1] = 0.4;
+          tptr[2] = 0.4;
+
+          return;
       }
       else
       {
-        x = 0.5 * (xStart + xEnd);
+          tptr[0] = rgb2[0];
+          tptr[1] = rgb2[1];
+          tptr[2] = rgb2[2];
+
+          return;
       }
-    }
-
-    // Do we need to move to the next node?
-    while (idx < numNodes && x > this->Internal->Nodes[idx]->X)
-    {
-      idx++;
-      // If we are at a valid point index, fill in
-      // the value at this node, and the one before (the
-      // two that surround our current sample location)
-      // idx cannot be 0 since we just incremented it.
-      if (idx < numNodes)
-      {
-        x1 = this->Internal->Nodes[idx - 1]->X;
-        x2 = this->Internal->Nodes[idx]->X;
-        if (usingLogScale)
-        {
-          x1 = log10(x1);
-          x2 = log10(x2);
-        }
-
-        rgb1[0] = this->Internal->Nodes[idx - 1]->R;
-        rgb2[0] = this->Internal->Nodes[idx]->R;
-
-        rgb1[1] = this->Internal->Nodes[idx - 1]->G;
-        rgb2[1] = this->Internal->Nodes[idx]->G;
-
-        rgb1[2] = this->Internal->Nodes[idx - 1]->B;
-        rgb2[2] = this->Internal->Nodes[idx]->B;
-
-        // We only need the previous midpoint and sharpness
-        // since these control this region
-        midpoint = this->Internal->Nodes[idx - 1]->Midpoint;
-        sharpness = this->Internal->Nodes[idx - 1]->Sharpness;
-
-        // Move midpoint away from extreme ends of range to avoid
-        // degenerate math
-        if (midpoint < 0.00001)
-        {
-          midpoint = 0.00001;
-        }
-
-        if (midpoint > 0.99999)
-        {
-          midpoint = 0.99999;
-        }
-      }
-    }
 
     // Are we at or past the end? If so, just use the last value
     if (x > this->Range[1])
@@ -1082,6 +1123,7 @@ void CustomColorTransferFunction::GetTable(double xStart, double xEnd, int size,
         }
         else if (this->ColorSpace == VTK_CTF_LAB)
         {
+            
           double lab1[3], lab2[3];
           vtkMath::RGBToLab(rgb1, lab1);
           vtkMath::RGBToLab(rgb2, lab2);
@@ -1090,6 +1132,7 @@ void CustomColorTransferFunction::GetTable(double xStart, double xEnd, int size,
           labTmp[0] = (1 - s) * lab1[0] + s * lab2[0];
           labTmp[1] = (1 - s) * lab1[1] + s * lab2[1];
           labTmp[2] = (1 - s) * lab1[2] + s * lab2[2];
+
 
           // Now convert back to RGB
           vtkMath::LabToRGB(labTmp, tptr);
@@ -2025,3 +2068,7 @@ void CustomColorTransferFunction::PrintSelf(ostream& os, vtkIndent indent)
        << " Midpoint: " << this->Internal->Nodes[i]->Midpoint << endl;
   }
 }
+
+
+
+
