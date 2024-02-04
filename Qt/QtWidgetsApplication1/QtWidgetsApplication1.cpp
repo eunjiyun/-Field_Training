@@ -186,7 +186,7 @@ void QtWidgetsApplication1::curve()
 
 		vtkSmartPointer<vtkPLYReader> reader{ vtkSmartPointer<vtkPLYReader>::New() };
 
-		reader->SetFileName(u8"C:\\Users\\dbzho\\OneDrive\\Desktop\\Field_Training\\Qt\\QtWidgetsApplication1\\upperJaw_1.ply");
+		reader->SetFileName(u8"C:\\Users\\UserK\\Desktop\\Field_Training\\Qt\\QtWidgetsApplication1\\upperJaw_1.ply");
 		reader->Update();
 
 		widget->polyData = reader->GetOutput();
@@ -258,16 +258,16 @@ void QtWidgetsApplication1::clip()
 
 		vtkSmartPointer<vtkPLYReader> reader{ vtkSmartPointer<vtkPLYReader>::New() };
 
-		reader->SetFileName(u8"C:\\Users\\dbzho\\OneDrive\\Desktop\\Field_Training\\Qt\\QtWidgetsApplication1\\upperJaw_1.ply");
+		reader->SetFileName(u8"C:\\Users\\UserK\\Desktop\\Field_Training\\Qt\\QtWidgetsApplication1\\upperJaw_1.ply");
 		reader->Update();
 
 		widget->polyData = reader->GetOutput();
 
 		// 클리핑 전 RGB 색상 정보를 저장합니다.
-		vtkUnsignedCharArray* originalColors{ vtkUnsignedCharArray::SafeDownCast(widget->polyData->GetPointData()->GetScalars()) };
+		widget->originalColors = (vtkDoubleArray*)widget->polyData->GetPointData()->GetScalars();
 
 
-		widget->polyData->GetPointData()->SetScalars(originalColors);
+		widget->polyData->GetPointData()->SetScalars(widget->originalColors);
 
 
 		// Visualize

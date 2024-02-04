@@ -22,7 +22,7 @@ void In3DTestWidget::LoadTest()
 
 	vtkSmartPointer<vtkPLYReader> reader{ vtkSmartPointer<vtkPLYReader>::New() };
 
-	reader->SetFileName(u8"C:\\Users\\dbzho\\OneDrive\\Desktop\\Field_Training\\Qt\\QtWidgetsApplication1\\upperJaw_1.ply");
+	reader->SetFileName(u8"C:\\Users\\UserK\\Desktop\\Field_Training\\Qt\\QtWidgetsApplication1\\upperJaw_1.ply");
 	reader->Update();
 
 	polyData = reader->GetOutput();
