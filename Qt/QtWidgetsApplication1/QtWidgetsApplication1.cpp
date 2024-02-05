@@ -192,10 +192,11 @@ void QtWidgetsApplication1::curve()
 		widget->polyData = reader->GetOutput();
 
 		// 클리핑 전 RGB 색상 정보를 저장합니다.
-		vtkUnsignedCharArray* originalColors{ vtkUnsignedCharArray::SafeDownCast(widget->polyData->GetPointData()->GetScalars()) };
+		widget->originalColors = (vtkDoubleArray*)widget->polyData->GetPointData()->GetScalars();
+	
 
 
-		widget->polyData->GetPointData()->SetScalars(originalColors);
+		widget->polyData->GetPointData()->SetScalars(widget->originalColors);
 
 
 		// Visualize
