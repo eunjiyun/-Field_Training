@@ -189,18 +189,19 @@ void QtWidgetsApplication1::curve()
 		reader->SetFileName(u8"C:\\Users\\dbzho\\OneDrive\\Desktop\\Field_Training\\Qt\\QtWidgetsApplication1\\upperJaw_1.ply");
 		reader->Update();
 
-		widget->polyData = reader->GetOutput();
+		vtkPolyData* polyData = reader->GetOutput();
+		//polyData = reader->GetOutput();
 
 		// 클리핑 전 RGB 색상 정보를 저장합니다.
-		widget->originalColors = (vtkDoubleArray*)widget->polyData->GetPointData()->GetScalars();
-	
+		//widget->originalColors = (vtkDoubleArray*)widget->polyData->GetPointData()->GetScalars();
+		vtkUnsignedCharArray* originalColors{ vtkUnsignedCharArray::SafeDownCast(polyData->GetPointData()->GetScalars()) };
 
 
-		widget->polyData->GetPointData()->SetScalars(widget->originalColors);
-
+		//widget->polyData->GetPointData()->SetScalars(widget->originalColors);
+		polyData->GetPointData()->SetScalars(originalColors);
 
 		// Visualize
-		widget->mapper->SetInputData(widget->polyData);
+		widget->mapper->SetInputData(polyData);
 
 
 		widget->actor->SetMapper(widget->mapper);
@@ -265,10 +266,10 @@ void QtWidgetsApplication1::clip()
 		widget->polyData = reader->GetOutput();
 
 		// 클리핑 전 RGB 색상 정보를 저장합니다.
-		vtkUnsignedCharArray* originalColors{ vtkUnsignedCharArray::SafeDownCast(widget->polyData->GetPointData()->GetScalars()) };
+		//vtkUnsignedCharArray* originalColors{ vtkUnsignedCharArray::SafeDownCast(widget->polyData->GetPointData()->GetScalars()) };
+		widget->originalColors = (vtkDoubleArray*)widget->polyData->GetPointData()->GetScalars();
 
-
-		widget->polyData->GetPointData()->SetScalars(originalColors);
+		widget->polyData->GetPointData()->SetScalars(widget->originalColors);
 
 
 		// Visualize
