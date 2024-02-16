@@ -8,13 +8,8 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkInteractorStyleTrackballCamera.h>
-
 #include <QtWidgets/QMainWindow>
-
 #include "ui_QtWidgetsApplication1.h"
-
-
-
 
 class In3DTestWidget;
 class CScreenShot;
@@ -73,18 +68,15 @@ public:
 	void blend();
 	void curve();
 	void clip();
+	void smooth();
+
 public:
-
-
 	In3DTestWidget* widget;
-
 	QWidget* scShot;
 	CScreenShot* screenShot;
 
-
 private:
 	Ui::QtWidgetsApplication1Class ui;
-
 };
 
 

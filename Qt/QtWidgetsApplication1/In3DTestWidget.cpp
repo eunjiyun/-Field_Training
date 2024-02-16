@@ -30,7 +30,6 @@ void In3DTestWidget::LoadTest()
 	// 클리핑 전 RGB 색상 정보를 저장합니다.
 	originalColors = (vtkDoubleArray*)polyData->GetPointData()->GetScalars();
 
-
 	// Create a new array to store the HSV values
 	hsvValues->SetNumberOfComponents(3);
 	hsvValues->SetName("HSVValues");
@@ -73,24 +72,14 @@ void In3DTestWidget::LoadTest()
 
 	polyData->GetPointData()->SetScalars(originalColors);
 
-
-
 	//polyData->Print(std::cout);
-
-
-
 
 	// Visualize
 	mapper->SetInputData(polyData);
-
-
 	actor->SetMapper(mapper);
-
 	renderer->AddActor(actor);
 
 	// vtkLight 객체를 생성합니다.
-
-
 	// 조명의 위치를 설정합니다.
 	light->SetPosition(1.0, 2.0, 3.0);
 

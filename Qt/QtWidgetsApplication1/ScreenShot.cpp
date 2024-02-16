@@ -65,7 +65,6 @@ CScreenShot::CScreenShot()
 
 	setWindowTitle(tr("Screenshot"));
 	resize(300, 200);
-
 }
 
 void CScreenShot::resizeEvent(QResizeEvent* /* event */)
@@ -76,23 +75,19 @@ void CScreenShot::resizeEvent(QResizeEvent* /* event */)
 
 	if (!screenshotLabel->pixmap() || scaledSize != screenshotLabel->pixmap()->size())
 		updateScreenshotLabel();
-
 }
 
 void CScreenShot::newScreenshot()
 {
-
 	if (hideThisWindowCheckBox->isChecked())
 		hide();
 	newScreenshotButton->setDisabled(true);
 
 	QTimer::singleShot(delaySpinBox->value() * 1000, this, &CScreenShot::shootScreen);
-
 }
 
 void CScreenShot::saveScreenshot()
 {
-
 	const QString format{ "png" };
 	QString initialPath{ QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) };
 	if (initialPath.isEmpty())
@@ -117,12 +112,10 @@ void CScreenShot::saveScreenshot()
 		QMessageBox::warning(this, tr("Save Error"), tr("The image could not be saved to \"%1\".")
 			.arg(QDir::toNativeSeparators(fileName)));
 	}
-
 }
 
 void CScreenShot::shootScreen()
 {
-
 	QScreen* screen{ QGuiApplication::primaryScreen() };
 	if (const QWindow * window{ windowHandle() })
 		screen = window->screen();
@@ -131,8 +124,6 @@ void CScreenShot::shootScreen()
 
 	if (delaySpinBox->value() != 0)
 		QApplication::beep();
-
-
 
 	originalPixmap = screen->grabWindow(0);
 
@@ -145,26 +136,21 @@ void CScreenShot::shootScreen()
 	newScreenshotButton->setDisabled(false);
 	if (hideThisWindowCheckBox->isChecked())
 		show();
-
 }
 
 void CScreenShot::updateCheckBox()
 {
-
 	if (0 == delaySpinBox->value()) {
 		hideThisWindowCheckBox->setDisabled(true);
 		hideThisWindowCheckBox->setChecked(false);
 	}
 	else
 		hideThisWindowCheckBox->setDisabled(false);
-
 }
 
 void CScreenShot::updateScreenshotLabel()
 {
-
 	screenshotLabel->setPixmap(originalPixmap.scaled(screenshotLabel->size(),
 		Qt::KeepAspectRatio,
 		Qt::SmoothTransformation));
-
 }
