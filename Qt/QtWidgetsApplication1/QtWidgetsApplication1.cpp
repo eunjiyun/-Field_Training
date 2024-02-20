@@ -127,7 +127,7 @@ void QtWidgetsApplication1::curve()
 		widget->cur = true;
 
 		vtkNew<CustomColorTransferFunction> ctf;
-
+		//2024.02.20
 		vtkNew<vtkCurvatures> curv;
 		curv->SetInputData(widget->polyData);
 		curv->SetCurvatureTypeToMean();
