@@ -128,8 +128,6 @@ namespace vtk_실습용_프로젝트
             creamActor.GetProperty().SetSpecular(.6);
             creamActor.GetProperty().SetSpecularPower(50);
 
-            
-
             renderer.AddActor(creamActor);
             renderer.AddActor(coneActor);
         }

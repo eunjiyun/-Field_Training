@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vtk_실습용_프로젝트", "vtk_실습용_프로젝트\vtk_실습용_프로젝트.csproj", "{4682CF88-51DF-4B7A-B3B6-0A570D66665A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4682CF88-51DF-4B7A-B3B6-0A570D66665A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4682CF88-51DF-4B7A-B3B6-0A570D66665A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4682CF88-51DF-4B7A-B3B6-0A570D66665A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4682CF88-51DF-4B7A-B3B6-0A570D66665A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DCFFA9EE-D404-4AAA-9A43-2BC93EBB9A4A}
+	EndGlobalSection
+EndGlobal
