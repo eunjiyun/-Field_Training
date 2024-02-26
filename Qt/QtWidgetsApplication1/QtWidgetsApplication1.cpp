@@ -1,6 +1,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include<iostream>
+#include <vtkWindowedSincPolyDataFilter.h>
 #include "vtkInteractorObserver.h"
 #include "QVTKOpenGLNativeWidget.h ";
 #include "QtWidgetsApplication1.h"
@@ -8,9 +9,6 @@
 #include "In3DTestWidget.h"
 #include "ScreenShot.h" 
 #include "CustomColorTransferFunction.h"
-
-
-
 
 //moc : 
 // ?뚯뒪 肄붾뱶 -> .obj ->而댄뙆??>留곹겕(湲곌퀎?대줈 踰덉뿭)
@@ -26,14 +24,10 @@ QtWidgetsApplication1::QtWidgetsApplication1(QWidget* parent)
 	this->widget = new In3DTestWidget(this);
 	this->widget->setGeometry(400, 150, 1050, 700);
 
-
-
 	this->scShot = new QWidget(this);
 	this->scShot->setGeometry(10, 370, 390, 500);
 
-
 	this->resize(1500, 900);
-
 	this->widget->LoadTest();
 
 
@@ -45,6 +39,7 @@ QtWidgetsApplication1::QtWidgetsApplication1(QWidget* parent)
 	connect(ui.pushButton_3, &QPushButton::clicked, this, &QtWidgetsApplication1::blend);
 	connect(ui.pushButton_4, &QPushButton::clicked, this, &QtWidgetsApplication1::curve);
 	connect(ui.pushButton_5, &QPushButton::clicked, this, &QtWidgetsApplication1::clip);
+	connect(ui.pushButton_6, &QPushButton::clicked, this, &QtWidgetsApplication1::smooth);
 }
 
 QtWidgetsApplication1::~QtWidgetsApplication1()
@@ -83,11 +78,8 @@ void QtWidgetsApplication1::test()
 
 	// 留덉슦???쇱そ 踰꾪듉 ?대┃ ?대깽?몄뿉 ????듭?踰꾨? 異붽??⑸땲??
 	this->widget->interactor->AddObserver(vtkCommand::LeftButtonPressEvent, myCommand);
-
 	this->widget->interactor->SetRenderWindow(this->widget->renderWindow);
-
 	this->widget->interactor->Start();
-
 }
 
 void QtWidgetsApplication1::setLight()
@@ -110,7 +102,7 @@ void QtWidgetsApplication1::blend()
 		sp->AddFragmentShaderReplacement(
 			"//VTK::Coincident::Impl",
 			true,
-			"fragOutput0.a=0.5f;",
+			"fragOutput0.a=0.7f;",
 			true
 		);
 	}
@@ -133,8 +125,8 @@ void QtWidgetsApplication1::curve()
 	if (!widget->cur) {
 		ui.pushButton_4->setText(QCoreApplication::translate("QtWidgetsApplication1Class", "curved!", nullptr));
 		widget->cur = true;
-		vtkNew<CustomColorTransferFunction> ctf;
 
+		vtkNew<CustomColorTransferFunction> ctf;
 
 		vtkNew<vtkCurvatures> curv;
 		curv->SetInputData(widget->polyData);
@@ -142,20 +134,16 @@ void QtWidgetsApplication1::curve()
 		curv->Update();
 		widget->polyData->DeepCopy(curv->GetOutput());
 
-
 		auto curvature{ widget->polyData->GetPointData()->GetArray("Mean_Curvature") };
-
 		vtkDoubleArray* curvArr{ vtkDoubleArray::New() };
 
 		for (int i{}; i < curvature->GetNumberOfTuples(); ++i) 
 			curvArr->InsertNextTuple1(*curvature->GetTuple(i));
 		
-		
 		double sum{};
 		for (vtkIdType i{}; i < curvArr->GetNumberOfTuples(); ++i) 
 			sum += curvArr->GetValue(i);
 		
-
 		double mean{ sum / curvArr->GetNumberOfTuples() };
 
 		double sumSquaredDiffs{};
@@ -170,11 +158,7 @@ void QtWidgetsApplication1::curve()
 		double stdDev{ std::sqrt(sumSquaredDiffs / (curvArr->GetNumberOfTuples() - 1)) };
 
 		ctf->SetColorSpaceToLab();
-
-		
 		ctf->AddRGBPoints(curvArr, widget->originalColors); 
-
-
 		ctf->Build();
 
 		widget->mapper->SetColorModeToMapScalars();
@@ -202,13 +186,9 @@ void QtWidgetsApplication1::curve()
 
 		// Visualize
 		widget->mapper->SetInputData(polyData);
-
-
 		widget->actor->SetMapper(widget->mapper);
-
 		widget->renderer->AddActor(widget->actor);
 	}
-
 }
 
 void QtWidgetsApplication1::clip()
@@ -218,6 +198,7 @@ void QtWidgetsApplication1::clip()
 		widget->clipped = true;
 		widget->polyData->GetPointData()->SetScalars(widget->hsvValues);
 		// 클리핑을 수행합니다.
+
 		vtkClipPolyData* clipper{ vtkClipPolyData::New() };
 		clipper->SetInputData(widget->polyData);
 
@@ -271,13 +252,67 @@ void QtWidgetsApplication1::clip()
 
 		widget->polyData->GetPointData()->SetScalars(widget->originalColors);
 
+		// Visualize
+		widget->mapper->SetInputData(widget->polyData);
+		widget->actor->SetMapper(widget->mapper);
+		widget->renderer->AddActor(widget->actor);
+	}
+}
+
+void QtWidgetsApplication1::smooth()
+{
+	if (!widget->smoothed) {
+		ui.pushButton_6->setText(QCoreApplication::translate("QtWidgetsApplication1Class", "smoothing!", nullptr));
+		widget->smoothed = true;
+
+		vtkSmartPointer<vtkPLYReader> reader =
+			vtkSmartPointer<vtkPLYReader>::New();
+		reader->SetFileName("C:\\Users\\dbzho\\OneDrive\\Desktop\\Field_Training\\Qt\\QtWidgetsApplication1\\upperJaw_1.ply");
+		reader->Update();
+
+		vtkSmartPointer<vtkPolyData> polyData = reader->GetOutput();
+
+		vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother =
+			vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
+		smoother->SetInputData(polyData);
+		smoother->SetNumberOfIterations(3000); // 스무딩 정도를 조절합니다.
+		smoother->BoundarySmoothingOff();
+		smoother->FeatureEdgeSmoothingOff();
+		smoother->SetFeatureAngle(120.0);
+		smoother->SetPassBand(0.001);        // 스무딩 정도를 조절합니다.
+		smoother->NonManifoldSmoothingOn();
+		smoother->NormalizeCoordinatesOn();
+		smoother->Update();
+
+		smoother->INPUT_ARRAYS_TO_PROCESS;// 
+
+		vtkSmartPointer<vtkPolyData> smoothedPolyData = smoother->GetOutput();
+
+		// Visualize
+		widget->mapper->SetInputData(smoothedPolyData);
+		widget->actor->SetMapper(widget->mapper);
+		widget->renderer->AddActor(widget->actor);
+	}
+	else {
+		ui.pushButton_6->setText(QCoreApplication::translate("QtWidgetsApplication1Class", "non smoothed", nullptr));
+		widget->smoothed = false;
+
+		vtkSmartPointer<vtkPLYReader> reader{ vtkSmartPointer<vtkPLYReader>::New() };
+
+		reader->SetFileName(u8"C:\\Users\\dbzho\\OneDrive\\Desktop\\Field_Training\\Qt\\QtWidgetsApplication1\\upperJaw_1.ply");
+		reader->Update();
+
+		widget->polyData = reader->GetOutput();
+
+		// 클리핑 전 RGB 색상 정보를 저장합니다.
+		//vtkUnsignedCharArray* originalColors{ vtkUnsignedCharArray::SafeDownCast(widget->polyData->GetPointData()->GetScalars()) };
+		widget->originalColors = (vtkDoubleArray*)widget->polyData->GetPointData()->GetScalars();
+
+		widget->polyData->GetPointData()->SetScalars(widget->originalColors);
 
 		// Visualize
 		widget->mapper->SetInputData(widget->polyData);
-
-
 		widget->actor->SetMapper(widget->mapper);
-
 		widget->renderer->AddActor(widget->actor);
 	}
 }
