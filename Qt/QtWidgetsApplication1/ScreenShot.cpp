@@ -92,7 +92,6 @@ void CScreenShot::newScreenshot()
 
 void CScreenShot::saveScreenshot()
 {
-
 	const QString format{ "png" };
 	QString initialPath{ QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) };
 	if (initialPath.isEmpty())
@@ -117,12 +116,10 @@ void CScreenShot::saveScreenshot()
 		QMessageBox::warning(this, tr("Save Error"), tr("The image could not be saved to \"%1\".")
 			.arg(QDir::toNativeSeparators(fileName)));
 	}
-
 }
 
 void CScreenShot::shootScreen()
 {
-
 	QScreen* screen{ QGuiApplication::primaryScreen() };
 	if (const QWindow * window{ windowHandle() })
 		screen = window->screen();
@@ -133,10 +130,9 @@ void CScreenShot::shootScreen()
 		QApplication::beep();
 
 	
-
 	originalPixmap = screen->grabWindow(0);
 
-	QRect rect(600, 200, 1050, 700);  // 캡처할 영역을 정의
+	QRect rect(0, 0, 1920, 1080);  // 캡처할 영역을 정의
 	QPixmap capturedArea{ originalPixmap.copy(rect) };  // 해당 영역을 잘라냄
 
 	originalPixmap = capturedArea;

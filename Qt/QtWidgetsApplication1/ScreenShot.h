@@ -24,7 +24,6 @@ private:
     void updateScreenshotLabel();
 
     QPixmap originalPixmap;
-
     QLabel* screenshotLabel;
     QSpinBox* delaySpinBox;
     QCheckBox* hideThisWindowCheckBox;
