@@ -34,7 +34,7 @@ namespace vtk_실습용_프로젝트
             //readply 
             vtkPLYReader reader = new vtkPLYReader();
 
-            reader.SetFileName("C:\\Users\\dbzho\\OneDrive\\Desktop\\Field_Training\\Qt\\QtWidgetsApplication1\\upperJaw_1.ply");
+            reader.SetFileName("C:\\Users\\USER\\Desktop\\Bright_Smile_Simulator\\upperJaw.ply");
             reader.Update();
 
 
